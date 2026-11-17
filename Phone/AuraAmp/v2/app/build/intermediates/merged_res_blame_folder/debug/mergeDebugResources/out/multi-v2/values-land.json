@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.aura.amp.app-mergeDebugResources-68:/values-land/values-land.xml",
+            "outputFile": "com.aura.amp.app-mergeDebugResources-70:/values-land/values-land.xml",
             "map": [
                 {
                     "source": "/Users/awesomedad/.gradle/caches/8.14.6/transforms/e0f963e92ea8e77ce002a636a51708a6/transformed/mediarouter-1.8.1/res/values-land/values-land.xml",
@@ -38,7 +38,7 @@
                     }
                 },
                 {
-                    "source": "/Users/awesomedad/.gradle/caches/8.14.6/transforms/b0acee06ec78a6efa5fe08353909c963/transformed/appcompat-1.6.1/res/values-land/values-land.xml",
+                    "source": "/Users/awesomedad/.gradle/caches/8.14.6/transforms/dc849486f3734c3785bf9fd1c82d839d/transformed/appcompat-1.7.0/res/values-land/values-land.xml",
                     "from": {
                         "startLines": "2,3,4",
                         "startColumns": "4,4,4",

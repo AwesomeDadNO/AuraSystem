@@ -1,82 +1,62 @@
 [
     {
-        "merged": "com.aura.amp.app-debug-70:/drawable_cover_headphones.png.flat",
-        "source": "com.aura.amp.app-main-72:/drawable/cover_headphones.png"
+        "merged": "com.aura.amp.app-debug-72:/mipmap-xxxhdpi_ic_launcher.png.flat",
+        "source": "com.aura.amp.app-main-74:/mipmap-xxxhdpi/ic_launcher.png"
     },
     {
-        "merged": "com.aura.amp.app-debug-70:/mipmap-hdpi_ic_launcher.png.flat",
-        "source": "com.aura.amp.app-main-72:/mipmap-hdpi/ic_launcher.png"
+        "merged": "com.aura.amp.app-debug-72:/mipmap-mdpi_ic_launcher.png.flat",
+        "source": "com.aura.amp.app-main-74:/mipmap-mdpi/ic_launcher.png"
     },
     {
-        "merged": "com.aura.amp.app-debug-70:/mipmap-xhdpi_ic_launcher.png.flat",
-        "source": "com.aura.amp.app-main-72:/mipmap-xhdpi/ic_launcher.png"
+        "merged": "com.aura.amp.app-debug-72:/mipmap-xhdpi_ic_launcher.png.flat",
+        "source": "com.aura.amp.app-main-74:/mipmap-xhdpi/ic_launcher.png"
     },
     {
-        "merged": "com.aura.amp.app-debug-70:/mipmap-xxxhdpi_ic_launcher_round.png.flat",
-        "source": "com.aura.amp.app-main-72:/mipmap-xxxhdpi/ic_launcher_round.png"
+        "merged": "com.aura.amp.app-debug-72:/mipmap-hdpi_ic_launcher_round.png.flat",
+        "source": "com.aura.amp.app-main-74:/mipmap-hdpi/ic_launcher_round.png"
     },
     {
-        "merged": "com.aura.amp.app-debug-70:/layout_aura_widget.xml.flat",
-        "source": "com.aura.amp.app-main-72:/layout/aura_widget.xml"
+        "merged": "com.aura.amp.app-debug-72:/mipmap-xxhdpi_ic_launcher.png.flat",
+        "source": "com.aura.amp.app-main-74:/mipmap-xxhdpi/ic_launcher.png"
     },
     {
-        "merged": "com.aura.amp.app-debug-70:/drawable_widget_dark.xml.flat",
-        "source": "com.aura.amp.app-main-72:/drawable/widget_dark.xml"
+        "merged": "com.aura.amp.app-debug-72:/mipmap-hdpi_ic_launcher.png.flat",
+        "source": "com.aura.amp.app-main-74:/mipmap-hdpi/ic_launcher.png"
     },
     {
-        "merged": "com.aura.amp.app-debug-70:/mipmap-hdpi_ic_launcher_round.png.flat",
-        "source": "com.aura.amp.app-main-72:/mipmap-hdpi/ic_launcher_round.png"
+        "merged": "com.aura.amp.app-debug-72:/mipmap-xxhdpi_ic_launcher_round.png.flat",
+        "source": "com.aura.amp.app-main-74:/mipmap-xxhdpi/ic_launcher_round.png"
     },
     {
-        "merged": "com.aura.amp.app-debug-70:/mipmap-xhdpi_ic_launcher_round.png.flat",
-        "source": "com.aura.amp.app-main-72:/mipmap-xhdpi/ic_launcher_round.png"
+        "merged": "com.aura.amp.app-debug-72:/drawable_ic_aura_background.xml.flat",
+        "source": "com.aura.amp.app-main-74:/drawable/ic_aura_background.xml"
     },
     {
-        "merged": "com.aura.amp.app-debug-70:/mipmap-mdpi_ic_launcher.png.flat",
-        "source": "com.aura.amp.app-main-72:/mipmap-mdpi/ic_launcher.png"
+        "merged": "com.aura.amp.app-debug-72:/drawable_ic_aura_foreground.png.flat",
+        "source": "com.aura.amp.app-main-74:/drawable/ic_aura_foreground.png"
     },
     {
-        "merged": "com.aura.amp.app-debug-70:/mipmap-xxhdpi_ic_launcher.png.flat",
-        "source": "com.aura.amp.app-main-72:/mipmap-xxhdpi/ic_launcher.png"
+        "merged": "com.aura.amp.app-debug-72:/xml_automotive_app_desc.xml.flat",
+        "source": "com.aura.amp.app-main-74:/xml/automotive_app_desc.xml"
     },
     {
-        "merged": "com.aura.amp.app-debug-70:/mipmap-mdpi_ic_launcher_round.png.flat",
-        "source": "com.aura.amp.app-main-72:/mipmap-mdpi/ic_launcher_round.png"
+        "merged": "com.aura.amp.app-debug-72:/mipmap-xhdpi_ic_launcher_round.png.flat",
+        "source": "com.aura.amp.app-main-74:/mipmap-xhdpi/ic_launcher_round.png"
     },
     {
-        "merged": "com.aura.amp.app-debug-70:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
-        "source": "com.aura.amp.app-main-72:/mipmap-anydpi-v26/ic_launcher_round.xml"
+        "merged": "com.aura.amp.app-debug-72:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "com.aura.amp.app-main-74:/mipmap-anydpi-v26/ic_launcher.xml"
     },
     {
-        "merged": "com.aura.amp.app-debug-70:/xml_aura_widget.xml.flat",
-        "source": "com.aura.amp.app-main-72:/xml/aura_widget.xml"
+        "merged": "com.aura.amp.app-debug-72:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "com.aura.amp.app-main-74:/mipmap-anydpi-v26/ic_launcher_round.xml"
     },
     {
-        "merged": "com.aura.amp.app-debug-70:/drawable_ic_aura_background.xml.flat",
-        "source": "com.aura.amp.app-main-72:/drawable/ic_aura_background.xml"
+        "merged": "com.aura.amp.app-debug-72:/mipmap-xxxhdpi_ic_launcher_round.png.flat",
+        "source": "com.aura.amp.app-main-74:/mipmap-xxxhdpi/ic_launcher_round.png"
     },
     {
-        "merged": "com.aura.amp.app-debug-70:/drawable_ic_aura_foreground.png.flat",
-        "source": "com.aura.amp.app-main-72:/drawable/ic_aura_foreground.png"
-    },
-    {
-        "merged": "com.aura.amp.app-debug-70:/drawable_widget_light.xml.flat",
-        "source": "com.aura.amp.app-main-72:/drawable/widget_light.xml"
-    },
-    {
-        "merged": "com.aura.amp.app-debug-70:/mipmap-xxhdpi_ic_launcher_round.png.flat",
-        "source": "com.aura.amp.app-main-72:/mipmap-xxhdpi/ic_launcher_round.png"
-    },
-    {
-        "merged": "com.aura.amp.app-debug-70:/xml_automotive_app_desc.xml.flat",
-        "source": "com.aura.amp.app-main-72:/xml/automotive_app_desc.xml"
-    },
-    {
-        "merged": "com.aura.amp.app-debug-70:/mipmap-xxxhdpi_ic_launcher.png.flat",
-        "source": "com.aura.amp.app-main-72:/mipmap-xxxhdpi/ic_launcher.png"
-    },
-    {
-        "merged": "com.aura.amp.app-debug-70:/mipmap-anydpi-v26_ic_launcher.xml.flat",
-        "source": "com.aura.amp.app-main-72:/mipmap-anydpi-v26/ic_launcher.xml"
+        "merged": "com.aura.amp.app-debug-72:/mipmap-mdpi_ic_launcher_round.png.flat",
+        "source": "com.aura.amp.app-main-74:/mipmap-mdpi/ic_launcher_round.png"
     }
 ]

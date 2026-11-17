@@ -193,6 +193,236 @@ fun interface CommandHandler {
     fun handle(context: CommandContext, respond: (CommandResult) -> Unit)
 }
 
+/** Stable AuraAmp/AuraOS command names and wire values shared by every app importing Coretex. */
+object AuraConnectContract {
+    const val PLAYBACK_STATUS = "playback.status"
+    const val PLAYBACK_PLAY = "playback.play"
+    const val PLAYBACK_PAUSE = "playback.pause"
+    const val PLAYBACK_NEXT = "playback.next"
+    const val PLAYBACK_PREVIOUS = "playback.previous"
+    const val PLAYBACK_SEEK = "playback.seek"
+    const val PLAYBACK_SHUFFLE = "playback.shuffle"
+    const val PLAYBACK_REPEAT = "playback.repeat"
+    const val PLAYBACK_HANDOFF = "playback.handoff"
+    const val QUEUE_ADD = "queue.add"
+    const val QUEUE_REMOVE = "queue.remove"
+    const val QUEUE_MOVE = "queue.move"
+    const val QUEUE_CLEAR = "queue.clear"
+    const val PLAYLIST_SYNC = "sync.playlists"
+    const val PLAYLIST_PUSH = "playlists.push"
+    const val CREDENTIAL_OFFER = "credential.offer"
+    const val DEEZER_ARL_KIND = "deezer-arl"
+
+    val requiredPermissions: Map<String, Permission> = mapOf(
+        PLAYBACK_STATUS to Permission.PLAYBACK_STATUS,
+        PLAYBACK_PLAY to Permission.PLAYBACK_CONTROL,
+        PLAYBACK_PAUSE to Permission.PLAYBACK_CONTROL,
+        PLAYBACK_NEXT to Permission.PLAYBACK_CONTROL,
+        PLAYBACK_PREVIOUS to Permission.PLAYBACK_CONTROL,
+        PLAYBACK_SEEK to Permission.PLAYBACK_CONTROL,
+        PLAYBACK_SHUFFLE to Permission.PLAYBACK_CONTROL,
+        PLAYBACK_REPEAT to Permission.PLAYBACK_CONTROL,
+        PLAYBACK_HANDOFF to Permission.PLAYBACK_CONTROL,
+        QUEUE_ADD to Permission.QUEUE_EDIT,
+        QUEUE_REMOVE to Permission.QUEUE_EDIT,
+        QUEUE_MOVE to Permission.QUEUE_EDIT,
+        QUEUE_CLEAR to Permission.QUEUE_EDIT,
+        PLAYLIST_SYNC to Permission.PLAYLIST_SYNC,
+        PLAYLIST_PUSH to Permission.PLAYLIST_SYNC,
+        CREDENTIAL_OFFER to Permission.CREDENTIAL_RECEIVE,
+    )
+
+    fun permissionFor(op: String): Permission? = requiredPermissions[op]
+}
+
+/** Coretex-owned, one-device/one-transfer credential grant used by receiving shells. */
+class AuraCredentialGrantWindow(private val clock: () -> Long = System::currentTimeMillis) {
+    private val connect get() = AuraCortex.connect
+    @Volatile private var armedDeviceId: String? = null
+    @Volatile private var armedUntilMs: Long = 0L
+
+    fun armedDevice(): String? = armedDeviceId?.takeIf { clock() < armedUntilMs }
+
+    fun arm(deviceId: String, ttlMs: Long = 120_000L): Boolean {
+        val paired = connect.pairedDevice(deviceId) ?: return false
+        connect.setPermissions(deviceId, paired.permissions + Permission.CREDENTIAL_RECEIVE)
+        armedDeviceId = deviceId
+        armedUntilMs = clock() + ttlMs.coerceAtLeast(1L)
+        return true
+    }
+
+    fun disarm(deviceId: String) {
+        connect.pairedDevice(deviceId)?.let { connect.setPermissions(deviceId, it.permissions - Permission.CREDENTIAL_RECEIVE) }
+        if (armedDeviceId == deviceId) {
+            armedDeviceId = null
+            armedUntilMs = 0L
+        }
+    }
+}
+
+/** Metadata-only handoff contract. A stream URL, local path, or credential must never cross AuraConnect in this object. */
+data class AuraTrackReference(
+    val id: String,
+    val title: String,
+    val artist: String,
+    val durationMs: Long,
+    val isrc: String? = null,
+    val cover: String? = null,
+) {
+    fun toWire(): Map<String, Any?> = linkedMapOf(
+        "id" to id, "title" to title, "artist" to artist, "durationMs" to durationMs, "isrc" to isrc, "cover" to cover,
+    )
+
+    companion object {
+        fun fromWire(value: Any?): AuraTrackReference? {
+            val map = value as? Map<*, *> ?: return null
+            val id = (map["id"] as? String)?.takeIf { it.isNotBlank() && it.length <= 512 } ?: return null
+            val title = (map["title"] as? String).orEmpty().take(512)
+            val artist = (map["artist"] as? String).orEmpty().take(512)
+            val durationMs = (map["durationMs"] as? Number)?.toLong()?.takeIf { it in 0L..86_400_000L } ?: 0L
+            val isrc = (map["isrc"] as? String)?.take(64)
+            val cover = (map["cover"] as? String)?.take(2048)
+            return AuraTrackReference(id, title, artist, durationMs, isrc, cover)
+        }
+    }
+}
+
+/** Platform adapter implemented by the receiving app around its own live music player. */
+interface AuraPlaybackTarget {
+    fun resume(); fun pause(); fun next(); fun previous()
+    fun seek(positionMs: Long)
+    fun setShuffle(on: Boolean?); fun setRepeat(on: Boolean?)
+    fun add(track: AuraTrackReference, position: String)
+    fun removeFromQueue(index: Int); fun moveInQueue(from: Int, to: Int); fun clearQueue()
+    fun handoff(track: AuraTrackReference, upcoming: List<AuraTrackReference>)
+    fun snapshot(): Map<String, Any?>
+}
+
+class AuraConnectCommandException(val callError: CallError, message: String) : Exception(message)
+
+/** Shared validation and dispatch for the AuraAmp remote; shells provide only the platform playback adapter. */
+class AuraPlaybackCommandHandler(private val target: () -> AuraPlaybackTarget?) {
+    fun execute(context: CommandContext): Map<String, Any?> {
+        val op = context.op
+        if (op !in PLAYBACK_OPERATIONS) throw AuraConnectCommandException(CallError.UNKNOWN_OPERATION, "Not available in this session")
+        val player = target() ?: throw AuraConnectCommandException(CallError.FAILED, "No player is running for this profile")
+        val args = context.args
+        when (op) {
+            AuraConnectContract.PLAYBACK_STATUS -> Unit
+            AuraConnectContract.PLAYBACK_PLAY -> player.resume()
+            AuraConnectContract.PLAYBACK_PAUSE -> player.pause()
+            AuraConnectContract.PLAYBACK_NEXT -> player.next()
+            AuraConnectContract.PLAYBACK_PREVIOUS -> player.previous()
+            AuraConnectContract.PLAYBACK_SEEK -> player.seek((args["positionMs"] as? Number)?.toLong()?.coerceAtLeast(0L) ?: 0L)
+            AuraConnectContract.PLAYBACK_SHUFFLE -> player.setShuffle(args["on"] as? Boolean)
+            AuraConnectContract.PLAYBACK_REPEAT -> player.setRepeat(args["on"] as? Boolean)
+            AuraConnectContract.QUEUE_ADD -> {
+                val track = AuraTrackReference.fromWire(args["track"])
+                    ?: (args["trackId"] as? String)?.takeIf { it.isNotBlank() }?.let { AuraTrackReference(it, "", "", 0L) }
+                    ?: throw AuraConnectCommandException(CallError.BAD_REQUEST, "trackId required")
+                val position = (args["position"] as? String ?: "end").lowercase()
+                if (position !in setOf("end", "next")) throw AuraConnectCommandException(CallError.BAD_REQUEST, "position must be end or next")
+                player.add(track, position)
+            }
+            AuraConnectContract.QUEUE_REMOVE -> player.removeFromQueue(((args["index"] as? Number)?.toInt() ?: 0).coerceAtLeast(0))
+            AuraConnectContract.QUEUE_MOVE -> player.moveInQueue(
+                ((args["from"] as? Number)?.toInt() ?: 0).coerceAtLeast(0),
+                ((args["to"] as? Number)?.toInt() ?: 0).coerceAtLeast(0),
+            )
+            AuraConnectContract.QUEUE_CLEAR -> player.clearQueue()
+            AuraConnectContract.PLAYBACK_HANDOFF -> {
+                val track = AuraTrackReference.fromWire(args["track"])
+                    ?: throw AuraConnectCommandException(CallError.BAD_REQUEST, "A track is required")
+                val rawUpcoming = args["upcoming"] as? List<*> ?: emptyList<Any?>()
+                if (rawUpcoming.size > MAX_HANDOFF_TRACKS) throw AuraConnectCommandException(CallError.BAD_REQUEST, "Too many upcoming tracks")
+                val upcoming = rawUpcoming.map { AuraTrackReference.fromWire(it) }
+                if (upcoming.any { it == null }) throw AuraConnectCommandException(CallError.BAD_REQUEST, "Invalid upcoming track metadata")
+                player.handoff(track, upcoming.filterNotNull())
+            }
+        }
+        return player.snapshot()
+    }
+
+    companion object {
+        const val MAX_HANDOFF_TRACKS = 200
+        val PLAYBACK_OPERATIONS = setOf(
+            AuraConnectContract.PLAYBACK_STATUS, AuraConnectContract.PLAYBACK_PLAY, AuraConnectContract.PLAYBACK_PAUSE,
+            AuraConnectContract.PLAYBACK_NEXT, AuraConnectContract.PLAYBACK_PREVIOUS, AuraConnectContract.PLAYBACK_SEEK,
+            AuraConnectContract.PLAYBACK_SHUFFLE, AuraConnectContract.PLAYBACK_REPEAT, AuraConnectContract.PLAYBACK_HANDOFF,
+            AuraConnectContract.QUEUE_ADD, AuraConnectContract.QUEUE_REMOVE, AuraConnectContract.QUEUE_MOVE, AuraConnectContract.QUEUE_CLEAR,
+        )
+    }
+}
+
+data class AuraPlaylistReference(
+    val id: String,
+    val title: String,
+    val description: String,
+    val tracks: List<AuraTrackReference>,
+) {
+    fun toWire(): Map<String, Any?> = linkedMapOf(
+        "id" to id, "title" to title, "description" to description, "tracks" to tracks.map(AuraTrackReference::toWire),
+    )
+}
+
+/** App-shell persistence seam for playlists pushed by a paired AuraConnect phone. */
+interface AuraPlaylistSink {
+    fun canReceive(): Boolean
+    fun importOne(playlist: AuraPlaylistReference)
+}
+
+/** Shared playlist payload validation and import result handling. Storage remains in the receiving app shell. */
+class AuraPlaylistPushHandler(private val sink: () -> AuraPlaylistSink?) {
+    fun execute(context: CommandContext): Map<String, Any?> {
+        if (context.op != AuraConnectContract.PLAYLIST_PUSH)
+            throw AuraConnectCommandException(CallError.UNKNOWN_OPERATION, "Not available in this session")
+        val target = sink() ?: throw AuraConnectCommandException(CallError.FAILED, "Playlist storage is unavailable")
+        if (!target.canReceive()) throw AuraConnectCommandException(CallError.NOT_ALLOWED, "This profile cannot receive playlists")
+        val bodies = context.args["playlists"] as? List<*>
+            ?: throw AuraConnectCommandException(CallError.BAD_REQUEST, "Playlists must be a list")
+        if (bodies.size > MAX_PLAYLISTS) throw AuraConnectCommandException(CallError.BAD_REQUEST, "Send at most $MAX_PLAYLISTS playlists per call")
+
+        var imported = 0
+        val skipped = ArrayList<Map<String, Any?>>()
+        for (raw in bodies) {
+            val body = raw as? Map<*, *>
+            val id = (body?.get("id") as? String)?.takeIf { it.isNotBlank() && it.length <= 512 }
+            if (body == null || id == null) {
+                skipped.add(linkedMapOf("id" to (id ?: ""), "reason" to "Invalid playlist metadata"))
+                continue
+            }
+            val rows = body["tracks"] as? List<*>
+            if (rows == null || rows.size > MAX_TRACKS) {
+                skipped.add(linkedMapOf("id" to id, "reason" to "Invalid or over-limit playlist tracks"))
+                continue
+            }
+            val tracks = rows.map { AuraTrackReference.fromWire(it) }
+            if (tracks.any { it == null }) {
+                skipped.add(linkedMapOf("id" to id, "reason" to "Invalid track metadata"))
+                continue
+            }
+            val playlist = AuraPlaylistReference(
+                id = id,
+                title = (body["title"] as? String ?: body["name"] as? String ?: "Playlist").take(512),
+                description = (body["description"] as? String ?: "").take(2048),
+                tracks = tracks.filterNotNull(),
+            )
+            try {
+                target.importOne(playlist)
+                imported++
+            } catch (e: IllegalArgumentException) {
+                skipped.add(linkedMapOf("id" to id, "reason" to (e.message ?: "rejected")))
+            }
+        }
+        return linkedMapOf("imported" to imported.toLong(), "skipped" to skipped)
+    }
+
+    companion object {
+        const val MAX_PLAYLISTS = 25
+        const val MAX_TRACKS = 2000
+    }
+}
+
 // =========================================================
 // AuraGuard – sikkerhetssystemet for alle apper
 // =========================================================
@@ -526,6 +756,15 @@ class AuraGuard {
         val code = randomDigits(6)
         receiverPairing = ReceiverPairing(code, priv, pub, clock())
         return PairingOffer(code, fingerprintOf(pub))
+    }
+
+    @Synchronized
+    fun getOrBeginPairingAsReceiver(): PairingOffer {
+        val rp = receiverPairing
+        if (rp != null && clock() - rp.createdAt <= policy.pairingCodeLifetime.inWholeMilliseconds) {
+            return PairingOffer(rp.code, fingerprintOf(rp.publicKey))
+        }
+        return beginPairingAsReceiver()
     }
 
     @Synchronized fun cancelPairing() { receiverPairing = null }
@@ -986,7 +1225,7 @@ class AuraGuard {
             if (parts.size == 4) {
                 val o = parts.map { it.toIntOrNull()?.takeIf { n -> n in 0..255 } ?: return false }
                 return o[0] == 10 || o[0] == 127 || (o[0] == 172 && o[1] in 16..31) ||
-                    (o[0] == 192 && o[1] == 168) || (o[0] == 169 && o[1] == 254)
+                    o[0] == 192 || (o[0] == 169 && o[1] == 254)
             }
             if (':' !in h) return false
             if (h == "::1") return true
@@ -1155,7 +1394,7 @@ class AuraConnect(private val guard: AuraGuard) {
     /** Åpner paring på denne enheten (mottaker). Vis qrData som QR og code som tekst. */
     fun startAdvertisingAsReceiver(deviceType: DeviceType = identity.type): PairingSession {
         identity = identity.copy(type = deviceType)
-        val offer = guard.beginPairingAsReceiver()
+        val offer = guard.getOrBeginPairingAsReceiver()
         val endpoint = transport.localEndpoint()
         val qrPayload = buildString {
             append("auraconnect://pair?v=$QR_VERSION&code=${offer.code}&type=$deviceType")

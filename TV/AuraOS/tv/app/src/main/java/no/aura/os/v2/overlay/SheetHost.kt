@@ -23,6 +23,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.text.AnnotatedString
@@ -68,6 +69,56 @@ fun SheetHost(sheet: Sheet, onClose: () -> Unit) {
                     sheet.note?.let { Text(it, style = AuraTypography.Label, color = AuraColors.TextSecondary) }
                     sheet.options.forEachIndexed { i, o -> SheetButton(o.label, if (i == 0) Modifier.focusRequester(first) else Modifier, primary = false, onClick = o.onPick) }
                     SheetButton("Cancel", Modifier, primary = false, onClick = onClose)
+                }
+                is Sheet.AuraConnectSheet -> {
+                    Text(sheet.title, style = AuraTypography.SectionTitle)
+                    Row(
+                        Modifier.fillMaxWidth().padding(vertical = 8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(24.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        val qrBitmap = remember(sheet.qrData) {
+                            try {
+                                val size = 300
+                                val bitMatrix = com.google.zxing.qrcode.QRCodeWriter().encode(sheet.qrData, com.google.zxing.BarcodeFormat.QR_CODE, size, size)
+                                val bmp = android.graphics.Bitmap.createBitmap(size, size, android.graphics.Bitmap.Config.RGB_565)
+                                for (x in 0 until size) {
+                                    for (y in 0 until size) {
+                                        bmp.setPixel(x, y, if (bitMatrix[x, y]) android.graphics.Color.BLACK else android.graphics.Color.WHITE)
+                                    }
+                                }
+                                bmp.asImageBitmap()
+                            } catch (e: Exception) {
+                                null
+                            }
+                        }
+                        if (qrBitmap != null) {
+                            androidx.compose.foundation.Image(
+                                bitmap = qrBitmap,
+                                contentDescription = "QR Code for pairing",
+                                modifier = Modifier.size(160.dp).background(androidx.compose.ui.graphics.Color.White, RoundedCornerShape(8.dp)).padding(8.dp),
+                            )
+                        }
+                        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                            Text("PIN: ${sheet.code.chunked(3).joinToString(" ")}", style = AuraTypography.SectionTitle.copy(fontSize = 28.sp, color = AuraColors.BrandOrange))
+                            Text("AuraOS TV", style = AuraTypography.CardTitle)
+                            Text("${sheet.host}:${sheet.port}", style = AuraTypography.Metadata, color = AuraColors.TextSecondary)
+                            if (sheet.activeModules.isNotEmpty()) {
+                                Text("Active modules: ${sheet.activeModules.joinToString(", ")}", style = AuraTypography.Label, color = AuraColors.Success)
+                            } else {
+                                Text("No active modules", style = AuraTypography.Label, color = AuraColors.AlertRed)
+                            }
+                        }
+                    }
+                    SheetButton("New code", Modifier.focusRequester(first), primary = false, onClick = sheet.onNewCode)
+                    SheetButton("Paired devices", Modifier, primary = false, onClick = sheet.onPairedDevices)
+                    if (sheet.onDeezer != null) {
+                        SheetButton("Receive Deezer sign-in", Modifier, primary = false, onClick = sheet.onDeezer)
+                    }
+                    if (sheet.onMediaServer != null) {
+                        SheetButton("Receive media server sign-in", Modifier, primary = false, onClick = sheet.onMediaServer)
+                    }
+                    SheetButton("Close", Modifier, primary = true, onClick = onClose)
                 }
                 is Sheet.PinEntry -> PinPad(sheet, first, onClose)
                 is Sheet.CodeEntry -> CodePad(sheet, first, onClose)

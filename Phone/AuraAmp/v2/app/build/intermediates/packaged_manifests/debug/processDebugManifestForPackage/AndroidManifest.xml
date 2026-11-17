@@ -15,28 +15,10 @@
     <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
-    <!-- Offline downloads run in a foreground service so they continue in the background. -->
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <!-- Needed on Android 11+ (API 30+) to query web browsers and external packages -->
+    <!-- Needed on Android 11+ to discover an installed Kite sender without broad package visibility. -->
     <queries>
         <package android:name="com.henry.kite" />
-
-        <intent>
-            <action android:name="android.intent.action.VIEW" />
-
-            <category android:name="android.intent.category.BROWSABLE" />
-
-            <data android:scheme="https" />
-        </intent>
-        <intent>
-            <action android:name="android.intent.action.VIEW" />
-
-            <category android:name="android.intent.category.BROWSABLE" />
-
-            <data android:scheme="http" />
-        </intent>
-
         <package android:name="com.google.android.gms.policy_cast_dynamite" />
     </queries>
 
@@ -82,16 +64,15 @@
         <service
             android:name="com.aura.amp.AuraMediaService"
             android:exported="true"
-            android:foregroundServiceType="mediaPlayback" >
+            android:foregroundServiceType="mediaPlayback|mediaPlayback" >
             <intent-filter>
                 <action android:name="androidx.media3.session.MediaLibraryService" />
                 <action android:name="android.media.browse.MediaBrowserService" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="androidx.media3.session.MediaSessionService" />
+            </intent-filter>
         </service>
-        <service
-            android:name="com.aura.amp.data.DownloadService"
-            android:exported="false"
-            android:foregroundServiceType="dataSync" />
 
         <activity
             android:name="com.aura.amp.MainActivity"

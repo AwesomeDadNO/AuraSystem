@@ -14,6 +14,18 @@ sealed interface Sheet {
     data class Choice(val title: String, val options: List<SheetOption>, val note: String? = null) : Sheet
     data class PinEntry(val title: String, val onSubmit: (String) -> Unit) : Sheet
     data class Message(val title: String, val lines: List<String>) : Sheet
+    data class AuraConnectSheet(
+        val title: String,
+        val qrData: String,
+        val code: String,
+        val host: String,
+        val port: Int,
+        val activeModules: List<String>,
+        val onNewCode: () -> Unit,
+        val onPairedDevices: () -> Unit,
+        val onDeezer: (() -> Unit)?,
+        val onMediaServer: (() -> Unit)?,
+    ) : Sheet
     /** Letters/digits code entry (on-screen grid). [onSubmit] receives exactly [length] characters. */
     data class CodeEntry(val title: String, val length: Int, val onSubmit: (String) -> Unit) : Sheet
     /**

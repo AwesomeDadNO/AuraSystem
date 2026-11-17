@@ -36,6 +36,8 @@ import no.aura.os.v2.settings.AdminFlow
 import no.aura.os.v2.settings.ModuleSwitches
 import no.aura.os.v2.settings.ModuleToggle
 import no.aura.os.v2.settings.ConnectionId
+import no.aura.os.v2.settings.ConnectionStatus
+import no.aura.os.v2.settings.ConnectionState
 import no.aura.os.v2.settings.Sheet
 import no.aura.os.v2.settings.SheetOption
 import no.aura.os.v2.settings.UsersFlow
@@ -218,10 +220,15 @@ fun AuraShell(
         override fun setRepeat(on: Boolean?) { onMain { if (on == null) pb.toggleRepeat() else pb.applyRepeat(on) } }
         override fun seek(positionMs: Long) { onMain { pb.seek(positionMs) } }
         override fun enqueue(track: no.aura.os.v2.connect.SyncTrack) { onMain { pb.enqueue(no.aura.os.v2.amp.AmpTrack(track.id, track.title, track.artist, (track.durationMs / 1000L).toInt(), track.cover, null, null, null, track.isrc)) } }
+        override fun enqueueNext(track: no.aura.os.v2.connect.SyncTrack) { onMain { pb.enqueueNext(no.aura.os.v2.amp.AmpTrack(track.id, track.title, track.artist, (track.durationMs / 1000L).toInt(), track.cover, null, null, null, track.isrc)) } }
         override fun removeFromQueue(index: Int) { onMain { pb.removeQueuedAt(index) } }
         override fun moveInQueue(from: Int, to: Int) { onMain { pb.moveQueued(from, to) } }
         override fun clearQueue() { onMain { pb.clearQueue() } }
-        override fun snapshot() = onMain { no.aura.os.v2.connect.PlaybackSnapshot(pb.playing, pb.loading, pb.shuffle, pb.repeat, pb.positionMs, pb.durationMs, pb.selected?.id, pb.selected?.title, pb.selected?.artist, pb.queue.size) }
+        override fun handoff(track: no.aura.os.v2.connect.SyncTrack, upcoming: List<no.aura.os.v2.connect.SyncTrack>) { onMain {
+            fun ampTrack(t: no.aura.os.v2.connect.SyncTrack) = no.aura.os.v2.amp.AmpTrack(t.id, t.title, t.artist, (t.durationMs / 1000L).toInt(), t.cover, null, null, null, t.isrc)
+            pb.handoff(ampTrack(track), upcoming.map(::ampTrack))
+        } }
+        override fun snapshot() = onMain { no.aura.os.v2.connect.PlaybackSnapshot(pb.playing, pb.loading, pb.shuffle, pb.repeat, pb.positionMs, pb.durationMs, pb.selected?.id, pb.selected?.title, pb.selected?.artist, pb.queue.size, pb.error) }
     }
 
     fun buildPairHandlers(owner: String, isChild: Boolean): Map<String, (no.aura.os.v2.connect.CommandContext) -> Map<String, Any?>> {
@@ -270,43 +277,70 @@ fun AuraShell(
         }
     }
 
-    // Bring AuraCortex up/down with the active (adult) profile and the app's foreground state. Pairing, trust, encryption and
-    // reconnection all live in coretex.kt; this shell only shows the prompts and plugs in the TV's own handlers.
-    DisposableEffect(profileState.activeId, pairingBuild, ampLifecycle) {
+    // Bring AuraCortex up/down with the active (adult) profile, foreground state, and module enablement states (flags.auraAmp, flags.auraBox).
+    DisposableEffect(profileState.activeId, pairingBuild, ampLifecycle, flags.auraAmp, flags.auraBox) {
         val owner = profileState.activeId
-        var ops: Set<String> = emptySet()
+        var ampOps: Set<String> = emptySet()
+        var boxOps: Set<String> = emptySet()
         var startJob: kotlinx.coroutines.Job? = null
-        fun bringUp() {
-            if (!pairingBuild || profiles.state.active.isChild || cortexUp || startJob?.isActive == true) return
-            startJob = flowScope.launch {
-                val started = withContext(Dispatchers.IO) { runCatching {
-                    no.aura.cortex.AuraCortex.start(no.aura.cortex.AuraCortex.Config(
-                        dataDir = appContext.filesDir, deviceName = "AuraOS TV", deviceType = no.aura.cortex.AuraConnect.DeviceType.TV,
-                        policy = no.aura.cortex.AuraGuard.GuardPolicy(pairingCodeLifetime = with(kotlin.time.Duration.Companion) { 2.minutes }),
-                        callbackExecutor = androidx.core.content.ContextCompat.getMainExecutor(appContext)))
-                }.isSuccess }
-                if (!started || profiles.state.activeId != owner) return@launch
-                val connect = no.aura.cortex.AuraCortex.connect
-                connect.onApprovePairing = { req, decide ->
-                    if (profiles.state.activeId != owner || profiles.state.active.isChild) decide(no.aura.cortex.Approval.Deny)
-                    else sheet = Sheet.Choice("Allow " + req.name.take(40) + "?", listOf(
-                        SheetOption("Allow") { decide(no.aura.cortex.Approval.Approve(owner, no.aura.cortex.Permission.DEFAULT_CONTROLLER)); pairedTick++
-                            sheet = Sheet.Message("Connect a phone", listOf("Allowed. The phone can now control and sync \"" + profiles.state.active.name + "\".")) },
-                        SheetOption("Deny") { decide(no.aura.cortex.Approval.Deny); sheet = null }),
-                        note = "This phone entered the code. Allow it to connect to the profile \"" + profiles.state.active.name + "\"? Check the fingerprint matches on the phone: " + req.shortFingerprint)
-                }
-                connect.onShowSas = { sas -> sheet = Sheet.Message("Connect a phone", listOf("Check that the phone shows the same number:", sas.chunked(3).joinToString(" "))) }
-                connect.onDeviceUnpaired = { pairedTick++ }
+        fun registerEnabledCommands() {
+            if (flags.auraAmp && ampOps.isEmpty()) {
                 val handlers = buildPairHandlers(owner, profiles.state.active.isChild)
                 no.aura.os.v2.connect.TvCommands.register(handlers)
-                ops = handlers.keys
-                cortexUp = true
+                ampOps = handlers.keys
+            } else if (!flags.auraAmp && ampOps.isNotEmpty()) {
+                no.aura.os.v2.connect.TvCommands.unregister(ampOps)
+                ampOps = emptySet()
             }
+
+            if (flags.auraBox && boxOps.isEmpty()) {
+                val boxHandlers = mapOf<String, (no.aura.os.v2.connect.CommandContext) -> Map<String, Any?>>(
+                    "box.status" to { mapOf("status" to "ok", "module" to "AuraBox") },
+                    "box.action" to { ctx -> mapOf("executed" to true, "args" to ctx.args) }
+                )
+                no.aura.os.v2.connect.TvCommands.register(boxHandlers)
+                boxOps = boxHandlers.keys
+            } else if (!flags.auraBox && boxOps.isNotEmpty()) {
+                no.aura.os.v2.connect.TvCommands.unregister(boxOps)
+                boxOps = emptySet()
+            }
+        }
+        fun bringUp() {
+            if (!pairingBuild || profiles.state.active.isChild) return
+            if (!cortexUp && startJob?.isActive != true) {
+                startJob = flowScope.launch {
+                    val started = withContext(Dispatchers.IO) { runCatching {
+                        no.aura.cortex.AuraCortex.start(no.aura.cortex.AuraCortex.Config(
+                            dataDir = appContext.filesDir, deviceName = "AuraOS TV", deviceType = no.aura.cortex.AuraConnect.DeviceType.TV,
+                            policy = no.aura.cortex.AuraGuard.GuardPolicy(pairingCodeLifetime = with(kotlin.time.Duration.Companion) { 2.minutes }),
+                            callbackExecutor = androidx.core.content.ContextCompat.getMainExecutor(appContext)))
+                    }.isSuccess }
+                    if (!started || profiles.state.activeId != owner) return@launch
+                    val connect = no.aura.cortex.AuraCortex.connect
+                    connect.onApprovePairing = { req, decide ->
+                        if (profiles.state.activeId != owner || profiles.state.active.isChild) decide(no.aura.cortex.Approval.Deny)
+                        else sheet = Sheet.Choice("Allow " + req.name.take(40) + "?", listOf(
+                            SheetOption("Allow") { decide(no.aura.cortex.Approval.Approve(owner, no.aura.cortex.Permission.DEFAULT_CONTROLLER)); pairedTick++
+                                sheet = Sheet.Message("Connect a phone", listOf("Allowed. The phone can now control and sync \"" + profiles.state.active.name + "\".")) },
+                            SheetOption("Deny") { decide(no.aura.cortex.Approval.Deny); sheet = null }),
+                            note = "This phone entered the code. Allow it to connect to the profile \"" + profiles.state.active.name + "\"? Check the fingerprint matches on the phone: " + req.shortFingerprint)
+                    }
+                    connect.onShowSas = { sas -> sheet = Sheet.Message("Connect a phone", listOf("Check that the phone shows the same number:", sas.chunked(3).joinToString(" "))) }
+                    connect.onDeviceUnpaired = { pairedTick++ }
+                    cortexUp = true
+                    // `DisposableEffect` doesn't restart when cortexUp changes (it's deliberately
+                    // not a key, since restarting would tear Cortex down). Register now so calls
+                    // work immediately after the async Coretex startup completes.
+                    registerEnabledCommands()
+                }
+            }
+            if (cortexUp) registerEnabledCommands()
         }
         fun tearDown() {
             startJob?.cancel(); startJob = null
             pairWindow.armedDevice()?.let(pairWindow::disarm)
-            no.aura.os.v2.connect.TvCommands.unregister(ops); ops = emptySet()
+            if (ampOps.isNotEmpty()) { no.aura.os.v2.connect.TvCommands.unregister(ampOps); ampOps = emptySet() }
+            if (boxOps.isNotEmpty()) { no.aura.os.v2.connect.TvCommands.unregister(boxOps); boxOps = emptySet() }
             if (cortexUp) no.aura.cortex.AuraCortex.stop()
             cortexUp = false
         }
@@ -341,15 +375,22 @@ fun AuraShell(
         val port = Regex("[?&]port=([0-9]+)").find(session.qrData)?.groupValues?.get(1)?.toIntOrNull()
         if (host == null || port == null) { no.aura.cortex.AuraCortex.connect.closePairing(); sheet = Sheet.Message(title, listOf(no.aura.os.v2.connect.ArlReceiveText.NO_NETWORK)); return }
         val isChild = profiles.state.active.isChild
-        val (heading, note) = no.aura.os.v2.connect.ArlReceiveText.waiting(host, port, session.code)
-        sheet = Sheet.Choice(heading, buildList {
-            add(SheetOption("Show a new code") { startPhoneLink(owner) })
-            add(SheetOption("Paired phones") { phoneDevicesSheet(owner) })
-            if (!isChild) {
-                add(SheetOption("Receive a Deezer sign-in from a phone") { armCredential(owner, "Deezer") })
-                if (mediaServers != null) add(SheetOption("Receive a media-server sign-in from a phone") { armCredential(owner, "media server") })
-            }
-        }, note = note)
+        val activeModules = buildList {
+            if (flags.auraAmp) add("AuraAmp")
+            if (flags.auraBox) add("AuraBox")
+        }
+        sheet = Sheet.AuraConnectSheet(
+            title = title,
+            qrData = session.qrData,
+            code = session.code,
+            host = host,
+            port = port,
+            activeModules = activeModules,
+            onNewCode = { startPhoneLink(owner) },
+            onPairedDevices = { phoneDevicesSheet(owner) },
+            onDeezer = if (!isChild) { { armCredential(owner, "Deezer") } } else null,
+            onMediaServer = if (!isChild && mediaServers != null) { { armCredential(owner, "media server") } } else null,
+        )
     }
 
     fun showAmpConnection():Unit {
@@ -378,7 +419,6 @@ fun AuraShell(
                 })
                 add(SheetOption("Disconnect this profile") {adminFlow.ensure {ampPlayback?.invalidateSource();ampVault.clear(owner);ampCheck=null;ampCredentialTick++;sheet=Sheet.Message("Eclipse",listOf("Local ARL removed for this profile."))}})
             }
-            if(no.aura.os.v2.BuildConfig.AURACONNECT_PAIRING) add(SheetOption("Connect a phone (pair, playlists, sign-in)") {adminFlow.ensure {startPhoneLink(owner)}})
             add(SheetOption("Close"){sheet=null})
         },note="The host, ARL and manifest path are kept separate. No Deezer SSO is required for this connection.")
     }
@@ -401,7 +441,18 @@ fun AuraShell(
     }
     DisposableEffect(mediaFlow, profileState.activeId) { onDispose { mediaFlow?.cancel() } }
     LaunchedEffect(mediaServers, resumeTick, profileState.activeId) { if (mediaServers?.verifyStale(profileState.activeId) == true) connTick++ }
-    val connectionStatuses = remember(profileState.activeId, resumeTick, tmdbTick, connTick, route == Route.SETTINGS) { settingsDeps.connections.statuses() }   // read once per resume / result, not on every recomposition
+    val connectionStatuses = remember(profileState.activeId, resumeTick, tmdbTick, connTick, route == Route.SETTINGS, pairedTick) {
+        settingsDeps.connections.statuses().map { status ->
+            if (status.id == ConnectionId.AURACONNECT) {
+                val devices = no.aura.cortex.AuraCortex.connect.pairedDevices()
+                if (devices.isNotEmpty()) {
+                    ConnectionStatus(ConnectionId.AURACONNECT, ConnectionState.CONNECTED, verifiedAtEpochMs = System.currentTimeMillis(), message = "${devices.size} devices paired")
+                } else {
+                    ConnectionStatus(ConnectionId.AURACONNECT, ConnectionState.NOT_CONFIGURED, message = "No devices paired")
+                }
+            } else status
+        }
+    }
     var navStyle by remember { mutableStateOf(navStyleStore.load()) }
     var pb by remember { mutableStateOf(playbackStore.load()) }
     val setPb: (no.aura.os.v2.playback.PlaybackPrefs) -> Unit = { pb = it; playbackStore.save(it) }
@@ -956,6 +1007,7 @@ fun AuraShell(
                         SettingsCatalog.PB_AUDIO2 -> pick("Secondary audio language", listOf(((if (pb.audioSecondary == null) "✓ " else "") + "None") to { setPb(pb.copy(audioSecondary = null)) }) + Lang.values().map { l -> ((if (l == pb.audioSecondary) "✓ " else "") + l.label) to { setPb(pb.copy(audioSecondary = l)) } })
                         SettingsCatalog.PB_SUBLANG -> pick("Preferred subtitle language", Lang.values().map { l -> ((if (l == pb.subtitleLang) "✓ " else "") + l.label) to { setPb(pb.copy(subtitleLang = l)) } })
                         SettingsCatalog.CONNECTION_PREFIX + ConnectionId.ECLIPSE.name -> showAmpConnection()
+                        SettingsCatalog.CONNECTION_PREFIX + ConnectionId.AURACONNECT.name -> adminFlow.ensure { if (!profileState.active.isChild) startPhoneLink(profileState.activeId) else sheet = Sheet.Message("Restricted profile", listOf("AuraConnect is available on adult profiles only.")) }
                         SettingsCatalog.CONNECTION_PREFIX + ConnectionId.SIMKL.name -> showSimklMenu()
                         SettingsCatalog.CONNECTION_PREFIX + ConnectionId.PLEX.name -> mediaFlow?.open(no.aura.os.v2.mediaserver.ServerKind.PLEX) ?: Unit
                         SettingsCatalog.CONNECTION_PREFIX + ConnectionId.JELLYFIN.name -> mediaFlow?.open(no.aura.os.v2.mediaserver.ServerKind.JELLYFIN) ?: Unit

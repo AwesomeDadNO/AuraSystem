@@ -95,7 +95,8 @@ dependencies {
     implementation 'androidx.mediarouter:mediarouter:1.8.1'
     implementation 'com.google.guava:guava:33.4.8-android'
     // AuraConnect controller & AuraMusic engine (built from source via includeBuild).
-    implementation 'no.aura.connect:auraconnect-android:3.0.0-ac2'
-    implementation 'no.aura.music:auramusic-engine:1.0.0'
+    // implementation 'no.aura.connect:auraconnect-android:3.0.0-ac2'
+    // implementation 'no.aura.music:auramusic-engine:1.0.0'
     implementation project(':Modules:AuraMusicEngine')
+    implementation project(':Modules:AuraConnect:send')
 }

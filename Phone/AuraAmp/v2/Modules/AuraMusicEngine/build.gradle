@@ -43,7 +43,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-code-scanner:16.1.0'
     implementation 'androidx.mediarouter:mediarouter:1.8.1'
     implementation 'com.google.guava:guava:33.4.8-android'
-    implementation 'no.aura.connect:auraconnect-android:3.0.0-ac2'
-    implementation 'no.aura.music:auramusic-engine:1.0.0'
+    // implementation 'no.aura.connect:auraconnect-android:3.0.0-ac2'
+    // implementation 'no.aura.music:auramusic-engine:1.0.0'
     implementation project(':Modules:AuraConnect:send')
 }

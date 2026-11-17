@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.aura.amp.app-mergeDebugResources-68:/values-sw720dp-v13/values-sw720dp-v13.xml",
+            "outputFile": "com.aura.amp.app-mergeDebugResources-70:/values-sw720dp-v13/values-sw720dp-v13.xml",
             "map": [
                 {
                     "source": "/Users/awesomedad/.gradle/caches/8.14.6/transforms/e0f963e92ea8e77ce002a636a51708a6/transformed/mediarouter-1.8.1/res/values-sw720dp-v13/values-sw720dp-v13.xml",

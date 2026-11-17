@@ -187,7 +187,7 @@ body{background:var(--gradient)}
 @keyframes miniExpand{to{transform:translateY(112%);opacity:0}}
 .mini-expand{animation:miniExpand .21s ease-in both}.player-screen.slide-up{animation:slideToTop .22s ease-in both}@keyframes slideToTop{to{transform:translateY(-90%);opacity:.1}}
 .action-shade{position:absolute;inset:0;background:#0008;z-index:24;animation:shadeIn .18s ease-out}
-.action-sheet{position:absolute;z-index:25;left:8px;right:8px;bottom:7px;background:var(--phone);color:var(--ink);border:1px solid var(--outline);border-radius:24px;padding:14px 16px 23px;box-shadow:0 -15px 50px #0005;animation:sheetIn .22s ease-out}
+.action-sheet{position:absolute;z-index:25;left:8px;right:8px;bottom:7px;max-height:calc(100% - env(safe-area-inset-top,0px) - 14px);overflow-y:auto;background:var(--phone);color:var(--ink);border:1px solid var(--outline);border-radius:24px;padding:14px 16px 23px;box-shadow:0 -15px 50px #0005;animation:sheetIn .22s ease-out}
 .action-sheet>button{width:100%;border:0;border-bottom:1px solid var(--outline);background:none;text-align:left;padding:16px 5px;font-size:15px;color:var(--ink)}.action-sheet>button:last-child{border:0}
 .action-head{display:flex;gap:12px;align-items:center;padding:3px 0 11px;border-bottom:1px solid var(--outline)}.action-head img,.action-head .placeholder-cover{height:52px;width:52px;object-fit:cover;border-radius:11px}.action-head>div{flex:1;min-width:0}.action-head strong,.action-head small{display:block;white-space:nowrap;text-overflow:ellipsis;overflow:hidden}.action-head small{color:var(--secondary);font-size:12px;margin-top:3px}.action-head>button{background:none;border:0;font-size:25px}
 @keyframes shadeIn{from{opacity:0}to{opacity:1}}@keyframes sheetIn{from{transform:translateY(35px);opacity:.5}to{transform:translateY(0);opacity:1}}
@@ -576,6 +576,33 @@ body{background:var(--gradient)}
 
 /* TV Remote Overlay */
 .tv-remote-overlay{position:fixed;inset:0;z-index:2147483500;background:var(--phone,#1a1b22);color:var(--ink,#fff);display:flex;flex-direction:column;padding:clamp(16px,4vw,24px);box-sizing:border-box;overflow-y:auto}
+.player-screen .scroll-area{padding-bottom:14px!important}
+.player-side-actions{display:flex;align-items:center;justify-content:space-between;width:100%;margin:11px 0 7px;flex-shrink:0}
+.player-side-button{display:flex;align-items:center;justify-content:center;gap:8px;min-width:102px;min-height:46px;padding:7px 13px;border:1px solid var(--outline);border-radius:24px;background:var(--pill);color:var(--ink);box-shadow:0 4px 14px #00000012}
+.player-side-button svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8}
+.player-side-button small{font-size:12px;font-weight:700}
+.auraplay-side-button>span{display:grid;place-items:center;width:23px;height:23px;border-radius:50%;background:var(--aura-orange-gradient);color:#fff;font-size:15px}
+.player-side-button.active{color:var(--orange);border-color:rgba(255,122,0,.38)}
+.player-control-dock{display:flex!important;align-items:center;justify-content:space-around;gap:3px;padding:7px 11px!important;height:70px!important}
+.player-control-dock>button{position:relative;display:grid;place-items:center;flex:1 1 0;min-width:0!important;min-height:48px!important;height:50px;padding:0;border:0;border-radius:50%;background:transparent;color:var(--ink);transition:color .18s,background .18s,transform .18s}
+.player-control-dock>button svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.player-control-dock>button.active{color:var(--orange);background:rgba(255,122,0,.12)}
+.player-control-dock>button.dock-play{flex:0 0 52px;width:52px;height:52px;background:var(--aura-orange-gradient);color:#fff;box-shadow:inset 0 1px 1px #ffffff95,0 7px 17px #ff760038}
+.player-control-dock>button.dock-play svg{width:25px;height:25px;fill:currentColor;stroke:currentColor}
+.player-control-dock>button:active,.player-side-button:active{transform:scale(.92)}
+.player-control-dock .repeat-one small{position:absolute;right:12px;top:8px;font-size:9px;font-weight:850;color:var(--orange)}
+.player-screen.player-entering .scroll-area{animation:auraPlayerRise .72s cubic-bezier(.2,.75,.25,1) both}
+.player-entering .player-control-dock{animation:auraDockMorph .62s cubic-bezier(.2,.75,.25,1) both}
+.nav-restoring .bottom-nav:not(.player-control-dock){animation:auraDockRestore .46s cubic-bezier(.2,.75,.25,1) both}
+.player-screen.slide-down .scroll-area{animation:auraPlayerDescend .48s cubic-bezier(.45,0,.8,.3) both}
+.player-screen.slide-down .player-control-dock{animation:auraDockDescend .42s cubic-bezier(.45,0,.8,.3) both}
+@keyframes auraPlayerRise{from{transform:translateY(100%);opacity:.65}to{transform:translateY(0);opacity:1}}
+@keyframes auraDockMorph{from{transform:translateY(30px) scale(.94);opacity:.35}to{transform:translateY(0) scale(1);opacity:1}}
+@keyframes auraDockRestore{from{transform:translateY(22px) scale(.96);opacity:.45}to{transform:translateY(0) scale(1);opacity:1}}
+@keyframes auraPlayerDescend{to{transform:translateY(100%);opacity:.25}}
+@keyframes auraDockDescend{to{transform:translateY(50px) scale(.96);opacity:.2}}
+@media(max-width:360px){.player-side-button{min-width:88px;padding:6px 10px}.player-side-actions{margin-top:7px}.player-control-dock{padding-right:7px!important;padding-left:7px!important}}
+@media(prefers-reduced-motion:reduce){.player-screen.player-entering .scroll-area,.player-entering .player-control-dock,.nav-restoring .bottom-nav:not(.player-control-dock),.player-screen.slide-down .scroll-area,.player-screen.slide-down .player-control-dock{animation-duration:.01ms!important}}
 </style></head>
 <body data-theme="light">
 <div class="aura-startup" id="auraStartup" role="status" aria-live="polite" aria-label="AURA AMP starting">

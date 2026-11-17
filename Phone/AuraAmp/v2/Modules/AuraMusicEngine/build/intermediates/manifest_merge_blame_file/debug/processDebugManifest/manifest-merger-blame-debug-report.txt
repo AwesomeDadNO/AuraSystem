@@ -1,0 +1,42 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.aura.amp" >
+4
+5    <uses-sdk android:minSdkVersion="26" />
+6
+7    <uses-permission android:name="android.permission.INTERNET" />
+7-->/Users/awesomedad/Documents/GitHub/AuraSystem/Phone/AuraAmp/v2/Modules/AuraMusicEngine/src/main/AndroidManifest.xml:3:5-67
+7-->/Users/awesomedad/Documents/GitHub/AuraSystem/Phone/AuraAmp/v2/Modules/AuraMusicEngine/src/main/AndroidManifest.xml:3:22-64
+8    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+8-->/Users/awesomedad/Documents/GitHub/AuraSystem/Phone/AuraAmp/v2/Modules/AuraMusicEngine/src/main/AndroidManifest.xml:4:5-79
+8-->/Users/awesomedad/Documents/GitHub/AuraSystem/Phone/AuraAmp/v2/Modules/AuraMusicEngine/src/main/AndroidManifest.xml:4:22-76
+9    <uses-permission android:name="android.permission.WAKE_LOCK" />
+9-->/Users/awesomedad/Documents/GitHub/AuraSystem/Phone/AuraAmp/v2/Modules/AuraMusicEngine/src/main/AndroidManifest.xml:5:5-68
+9-->/Users/awesomedad/Documents/GitHub/AuraSystem/Phone/AuraAmp/v2/Modules/AuraMusicEngine/src/main/AndroidManifest.xml:5:22-65
+10    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+10-->/Users/awesomedad/Documents/GitHub/AuraSystem/Phone/AuraAmp/v2/Modules/AuraMusicEngine/src/main/AndroidManifest.xml:6:5-77
+10-->/Users/awesomedad/Documents/GitHub/AuraSystem/Phone/AuraAmp/v2/Modules/AuraMusicEngine/src/main/AndroidManifest.xml:6:22-74
+11    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+11-->/Users/awesomedad/Documents/GitHub/AuraSystem/Phone/AuraAmp/v2/Modules/AuraMusicEngine/src/main/AndroidManifest.xml:7:5-92
+11-->/Users/awesomedad/Documents/GitHub/AuraSystem/Phone/AuraAmp/v2/Modules/AuraMusicEngine/src/main/AndroidManifest.xml:7:22-89
+12
+13    <application>
+13-->/Users/awesomedad/Documents/GitHub/AuraSystem/Phone/AuraAmp/v2/Modules/AuraMusicEngine/src/main/AndroidManifest.xml:9:5-18:19
+14        <service
+14-->/Users/awesomedad/Documents/GitHub/AuraSystem/Phone/AuraAmp/v2/Modules/AuraMusicEngine/src/main/AndroidManifest.xml:10:9-17:19
+15            android:name="com.aura.amp.AuraMediaService"
+15-->/Users/awesomedad/Documents/GitHub/AuraSystem/Phone/AuraAmp/v2/Modules/AuraMusicEngine/src/main/AndroidManifest.xml:11:13-45
+16            android:exported="true"
+16-->/Users/awesomedad/Documents/GitHub/AuraSystem/Phone/AuraAmp/v2/Modules/AuraMusicEngine/src/main/AndroidManifest.xml:12:13-36
+17            android:foregroundServiceType="mediaPlayback" >
+17-->/Users/awesomedad/Documents/GitHub/AuraSystem/Phone/AuraAmp/v2/Modules/AuraMusicEngine/src/main/AndroidManifest.xml:13:13-58
+18            <intent-filter>
+18-->/Users/awesomedad/Documents/GitHub/AuraSystem/Phone/AuraAmp/v2/Modules/AuraMusicEngine/src/main/AndroidManifest.xml:14:13-16:29
+19                <action android:name="androidx.media3.session.MediaSessionService" />
+19-->/Users/awesomedad/Documents/GitHub/AuraSystem/Phone/AuraAmp/v2/Modules/AuraMusicEngine/src/main/AndroidManifest.xml:15:17-86
+19-->/Users/awesomedad/Documents/GitHub/AuraSystem/Phone/AuraAmp/v2/Modules/AuraMusicEngine/src/main/AndroidManifest.xml:15:25-83
+20            </intent-filter>
+21        </service>
+22    </application>
+23
+24</manifest>

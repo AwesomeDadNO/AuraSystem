@@ -103,6 +103,13 @@ class AmpPlayback(context: Context, profile: String) {
         }
     }
     fun enqueue(track: AmpTrack) { if (!closed) { queue = (queue + track).take(200); library.setQueue(queue) } }
+    /** Add a remotely supplied track before the existing upcoming queue without interrupting the selected song. */
+    fun enqueueNext(track: AmpTrack) { if (!closed) { queue = (listOf(track) + queue).take(200); library.setQueue(queue) } }
+    /** Start a handed-off phone track and replace the upcoming queue with the phone's ordered continuation. */
+    fun handoff(track: AmpTrack, upcoming: List<AmpTrack>) {
+        if (closed) return
+        play(track, listOf(track) + upcoming.take(199))
+    }
     fun playQueued(index:Int) { if(closed)return; val track=queue.getOrNull(index) ?: return; queue=queue.drop(index+1);library.setQueue(queue);play(track) }
     fun removeQueuedAt(index:Int) { if(closed || index !in queue.indices)return; queue=queue.filterIndexed { i,_->i!=index };library.setQueue(queue) }
     fun removeQueued(id: String) { queue = queue.filterNot { it.id == id }; library.setQueue(queue) }

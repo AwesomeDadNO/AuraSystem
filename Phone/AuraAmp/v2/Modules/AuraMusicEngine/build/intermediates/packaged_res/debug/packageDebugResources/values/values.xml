@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="spotify_public_client_id" translatable="false">a9afa6f845ee4b99b0e903186d7e03e3</string>
+    <string name="widget_description">Aura Amp: now playing, play/pause and skip</string>
+</resources>

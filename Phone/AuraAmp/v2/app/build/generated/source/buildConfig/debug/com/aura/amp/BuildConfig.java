@@ -13,8 +13,4 @@ public final class BuildConfig {
   public static final String AURA_UPDATE_URL = "";
   // Field from default config.
   public static final String SPOTIFY_CLIENT_ID = "a9afa6f845ee4b99b0e903186d7e03e3";
-  // Field from default config.
-  public static final String TICKETMASTER_API_KEY = "";
-  // Field from default config.
-  public static final String YOUTUBE_API_KEY = "AIzaSyBl0MnCCQyWxPtLSgqlk19LcFcYr-COZOo";
 }

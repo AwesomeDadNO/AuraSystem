@@ -1,23 +1,10 @@
 R_DEF: Internal format may change without notice
 local
-drawable cover_headphones
 drawable ic_aura_background
 drawable ic_aura_foreground
-drawable widget_dark
-drawable widget_light
-id widget_art
-id widget_artist
-id widget_next
-id widget_play
-id widget_prev
-id widget_root
-id widget_theme
-id widget_title
-layout aura_widget
 mipmap ic_launcher
 mipmap ic_launcher_round
 string spotify_public_client_id
 string widget_description
 style Theme.AuraAmp
-xml aura_widget
 xml automotive_app_desc

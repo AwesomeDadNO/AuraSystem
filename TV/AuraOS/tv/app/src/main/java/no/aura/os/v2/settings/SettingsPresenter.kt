@@ -44,6 +44,7 @@ object SettingsPresenter {
             item.id == SettingsCatalog.NAV_STYLE -> SettingsRow(item, "Text only", null, true)
             item.id == "module.home" -> SettingsRow(item, "Always on", null, true)
             item.id == "connection.AURAMUSIC" -> SettingsRow(item, if (s.connections.firstOrNull { it.id.name == "AURAMUSIC" }?.state == ConnectionState.CONNECTED) "On" else "Off", null, true)
+            item.id == "connection.AURACONNECT" -> SettingsRow(item, "Active · Port 47131", null, true)
             item.id.startsWith(SettingsCatalog.CONNECTION_PREFIX) -> SettingsRow(item, status(item, s).state.label, null, true)
             else -> SettingsRow(item, statusValue(item.id, s), null, true)
         }

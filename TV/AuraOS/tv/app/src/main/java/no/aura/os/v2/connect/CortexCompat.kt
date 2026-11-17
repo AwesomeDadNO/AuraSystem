@@ -1,6 +1,7 @@
 package no.aura.os.v2.connect
 
 import no.aura.cortex.AuraCortex
+import no.aura.cortex.AuraConnectContract
 import no.aura.cortex.CallError
 import no.aura.cortex.CommandResult
 import java.util.concurrent.Executors
@@ -23,15 +24,14 @@ class ProtocolException(val code: ErrorCode, message: String) : Exception(messag
 fun interface CommandHandler { fun handle(context: CommandContext): Map<String, Any?> }
 
 object TvCommands {
-    /** Tillatelsen hver operasjon krever (samme tabell som AuraConnect v3). Ukjente operasjoner registreres ikke. */
-    val PERMISSIONS: Map<String, Permission> = mapOf(
-        "playback.status" to Permission.PLAYBACK_STATUS,
-        "playback.play" to Permission.PLAYBACK_CONTROL, "playback.pause" to Permission.PLAYBACK_CONTROL,
-        "playback.next" to Permission.PLAYBACK_CONTROL, "playback.previous" to Permission.PLAYBACK_CONTROL,
-        "playback.seek" to Permission.PLAYBACK_CONTROL, "playback.shuffle" to Permission.PLAYBACK_CONTROL, "playback.repeat" to Permission.PLAYBACK_CONTROL,
-        "queue.add" to Permission.QUEUE_EDIT, "queue.remove" to Permission.QUEUE_EDIT, "queue.move" to Permission.QUEUE_EDIT, "queue.clear" to Permission.QUEUE_EDIT,
-        "sync.playlists" to Permission.PLAYLIST_SYNC, "playlists.push" to Permission.PLAYLIST_SYNC, "sync.watchlist" to Permission.WATCHLIST_SYNC,
-        "media.offer" to Permission.MEDIA_SEND, "credential.offer" to Permission.CREDENTIAL_RECEIVE,
+    /** Tillatelsen hver operasjon krever (samme tabell som AuraConnect v3). Ukjente operasjoner registreres ikke.
+     * Merk: Nye apper som f.eks. AuraBox kan registrere egne operasjoner med eget prefiks (f.eks. "box.*")
+     * og en tillatelse direkte her i TvCommands.PERMISSIONS.
+     */
+    val PERMISSIONS: Map<String, Permission> = AuraConnectContract.requiredPermissions + mapOf(
+        "sync.watchlist" to Permission.WATCHLIST_SYNC,
+        "media.offer" to Permission.MEDIA_SEND,
+        "box.status" to Permission.PLAYBACK_CONTROL, "box.action" to Permission.PLAYBACK_CONTROL,
     )
 
     // Handlerne hopper selv til hovedtråden (runBlocking(Dispatchers.Main)), så de må kjøre på en bakgrunnstråd.

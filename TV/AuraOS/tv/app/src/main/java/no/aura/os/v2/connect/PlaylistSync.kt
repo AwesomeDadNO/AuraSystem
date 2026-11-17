@@ -1,5 +1,10 @@
 package no.aura.os.v2.connect
 
+import no.aura.cortex.AuraConnectContract
+import no.aura.cortex.AuraConnectCommandException
+import no.aura.cortex.AuraPlaylistPushHandler
+import no.aura.cortex.AuraPlaylistReference
+import no.aura.cortex.AuraPlaylistSink
 import java.security.MessageDigest
 
 /**
@@ -51,10 +56,10 @@ interface PlaylistSink {
 }
 
 object PlaylistSync {
-    const val OP = "sync.playlists"
-    const val PUSH_OP = "playlists.push"
-    const val MAX_BODIES = 25
-    const val MAX_TRACKS = 2000
+    const val OP = AuraConnectContract.PLAYLIST_SYNC
+    const val PUSH_OP = AuraConnectContract.PLAYLIST_PUSH
+    const val MAX_BODIES = AuraPlaylistPushHandler.MAX_PLAYLISTS
+    const val MAX_TRACKS = AuraPlaylistPushHandler.MAX_TRACKS
     const val MAX_HAVE = 500
 
     private fun trackMap(t: SyncTrack) = linkedMapOf<String, Any?>("id" to t.id, "title" to t.title, "artist" to t.artist, "durationMs" to t.durationMs, "isrc" to t.isrc, "cover" to t.cover)
@@ -120,31 +125,32 @@ class PlaylistSyncHandler(private val source: () -> PlaylistSource) : CommandHan
  * A child/blank profile refuses the whole call; a single over-limit playlist is skipped (reported in `skipped`) without failing the rest.
  */
 class PlaylistPushHandler(private val sink: () -> PlaylistSink) : CommandHandler {
-    override fun handle(context: CommandContext): Map<String, Any?> {
-        if (context.op != PlaylistSync.PUSH_OP) throw ProtocolException(ErrorCode.UNKNOWN_OPERATION, "Not available in this session")
-        val target = sink()
-        if (!target.canReceive()) throw ProtocolException(ErrorCode.NOT_AUTHORIZED, "This profile cannot receive playlists")
-        var imported = 0
-        val skipped = ArrayList<Map<String, Any?>>()
-        val bodies = context.args["playlists"] as? List<*> ?: throw ProtocolException(ErrorCode.BAD_REQUEST, "Playlists must be a list")
-        if (bodies.size > PlaylistSync.MAX_BODIES) throw ProtocolException(ErrorCode.BAD_REQUEST, "Send at most 25 playlists per call")
-        for (raw in bodies) {
-            val body = raw as? Map<*, *> ?: continue
-            val id = body["id"] as? String ?: continue
-            val rows = body["tracks"] as? List<*>
-            if (rows == null || rows.size > PlaylistSync.MAX_TRACKS) {
-                skipped.add(linkedMapOf("id" to id, "reason" to "Invalid or over-limit playlist tracks"))
-                continue
+    private val core = AuraPlaylistPushHandler {
+        sink()?.let { target ->
+            object : AuraPlaylistSink {
+                override fun canReceive() = target.canReceive()
+                override fun importOne(playlist: AuraPlaylistReference) {
+                    target.importOne(SyncPlaylist(
+                        playlist.id,
+                        playlist.title,
+                        playlist.description,
+                        playlist.tracks.map { SyncTrack(it.id, it.title, it.artist, it.durationMs, it.isrc, it.cover) },
+                    ))
+                }
             }
-            val p = PlaylistSync.parsePush(listOf(body)).singleOrNull() ?: continue
-            if (p.tracks.size != rows.size) {
-                skipped.add(linkedMapOf("id" to id, "reason" to "Invalid track metadata"))
-                continue
-            }
-            try { target.importOne(p); imported++ }
-            catch (e: IllegalArgumentException) { skipped.add(linkedMapOf("id" to p.id, "reason" to (e.message ?: "rejected"))) }
         }
-        return linkedMapOf("imported" to imported, "skipped" to skipped)
+    }
+
+    override fun handle(context: CommandContext): Map<String, Any?> = try {
+        core.execute(context)
+    } catch (e: AuraConnectCommandException) {
+        val code = when (e.callError) {
+            no.aura.cortex.CallError.UNKNOWN_OPERATION -> ErrorCode.UNKNOWN_OPERATION
+            no.aura.cortex.CallError.NOT_ALLOWED -> ErrorCode.NOT_AUTHORIZED
+            no.aura.cortex.CallError.BAD_REQUEST -> ErrorCode.BAD_REQUEST
+            else -> ErrorCode.HANDLER_FAILED
+        }
+        throw ProtocolException(code, e.message ?: "The TV could not complete this")
     }
 }
 

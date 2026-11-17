@@ -46,7 +46,14 @@ object SettingsCatalog {
     val modules = listOf(SettingsItem("module.home", "Home", MODULES, INFO)) +
         ModuleKey.values().map { SettingsItem(MODULE_PREFIX + it.name, it.title, MODULES, TOGGLE) }
 
-    val connections = listOf(SettingsItem("simkl.auto_sync", "Simkl automatic sync · hourly", CONNECTIONS, TOGGLE), SettingsItem("simkl.sync_status", "Simkl sync status", CONNECTIONS, VALUE)) + ConnectionId.values().map { SettingsItem(CONNECTION_PREFIX + it.name, it.title, CONNECTIONS, if (it == ConnectionId.ECLIPSE || it == ConnectionId.ULTRAMAX || it == ConnectionId.SIMKL || it == ConnectionId.PLEX || it == ConnectionId.JELLYFIN || it == ConnectionId.EMBY) ACTION else if (it == ConnectionId.AURAMUSIC) TOGGLE else VALUE) }
+    val connections = buildList {
+        if (no.aura.os.v2.BuildConfig.AURACONNECT_PAIRING) {
+            add(SettingsItem(CONNECTION_PREFIX + ConnectionId.AURACONNECT.name, ConnectionId.AURACONNECT.title, CONNECTIONS, ACTION))
+        }
+        add(SettingsItem("simkl.auto_sync", "Simkl automatic sync · hourly", CONNECTIONS, TOGGLE))
+        add(SettingsItem("simkl.sync_status", "Simkl sync status", CONNECTIONS, VALUE))
+        addAll(ConnectionId.values().filter { it != ConnectionId.AURACONNECT || !no.aura.os.v2.BuildConfig.AURACONNECT_PAIRING }.map { SettingsItem(CONNECTION_PREFIX + it.name, it.title, CONNECTIONS, if (it == ConnectionId.ECLIPSE || it == ConnectionId.ULTRAMAX || it == ConnectionId.SIMKL || it == ConnectionId.PLEX || it == ConnectionId.JELLYFIN || it == ConnectionId.EMBY || it == ConnectionId.AURACONNECT) ACTION else if (it == ConnectionId.AURAMUSIC) TOGGLE else VALUE) })
+    }
 
     val users = listOf(
         SettingsItem("users.active", "Active profile", USERS, VALUE),

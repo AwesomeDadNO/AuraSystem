@@ -189,7 +189,12 @@ public final class AuraMediaService extends MediaLibraryService {
         player = new ExoPlayer.Builder(this).setLoadControl(loadControl).build();
         player.setPreloadConfiguration(new ExoPlayer.PreloadConfiguration(2_000_000L));
         player.setAudioAttributes(new AudioAttributes.Builder().setUsage(C.USAGE_MEDIA).setContentType(C.AUDIO_CONTENT_TYPE_MUSIC).build(), true);
-        Intent open = new Intent(this, MainActivity.class);
+        Intent open;
+        try {
+            open = new Intent(this, Class.forName("com.aura.amp.MainActivity"));
+        } catch (ClassNotFoundException e) {
+            open = new Intent();
+        }
         PendingIntent pi = PendingIntent.getActivity(this,0,open,PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE);
         session = new MediaLibrarySession.Builder(this, player, carCallback).setSessionActivity(pi).build();
         player.addListener(new Player.Listener() {

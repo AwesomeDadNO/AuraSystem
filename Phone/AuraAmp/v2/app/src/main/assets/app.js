@@ -10,9 +10,10 @@ window.AuraNative?.setActiveSyncProfile?.(persist.account);
 persist.manifest=window.AuraNative?.hasDeezerArl?.()?'https://eclipse.ultramax.vip/__aura_arl__/manifest.json':'';
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(persist))}catch(e){note('Unable to save settings')}};
 let serverTracks=[],serverBusy=false,serverMessage='',serverSeq=0,showArlHelp=false;
-let discoverCategory='Overview', actionTrack=null, lastPage='discover', collapsed=false, playerGestureStart=null;
+let discoverCategory='Overview', actionTrack=null, lastPage='discover', collapsed=false, playerGestureStart=null, playerTransition='';
 let playlistPickTracks=null;let shuffleEnabled=false,repeatMode=0,queueOpen=false,playerView='art',videoState={track:'',loading:false,url:'',title:''};
 let artistDetail=null, artistLoading=false, artistError='', artistSourcePage='discover', albumSourcePage='discover', lyricsMode=false, lyricState={track:'',loading:false,error:'',lines:[],plain:false};
+let pendingAuraControlAction=null,pendingAuraPlaylistAction=null;
 let activeQueueSource='';let busyHome=true; let albumDetail=null;let page='discover', query='', searchTimer, searchVersion=0, category='All', home={trending:[],new:[],top:[],norway:[],norwaySource:'Apple Music'}, results=[], playQueue=[], current=null, playing=false, sourceError='', pending=new Map(), reqId=0, providerManifest=null, providerBase='', providerSearchPath='', busy=false, localSongs=[];
 // Restore chart metadata immediately while refreshing in the background.
 try{const cached=JSON.parse(localStorage.getItem('aura_amp_chart_cache_v1')||'null');if(cached&&Array.isArray(cached.top)&&cached.top.length){home={...home,...cached};busyHome=false}}catch(_){}
@@ -474,6 +475,7 @@ const section=(title,right='')=>`<div class="section-head"><h2>${title}</h2>${ri
 const brand=()=>`<div class="screen-header"><span class="brand-small">AURA <b>AMP</b></span></div>`;
 const glyph=(name)=>({home:'<svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V21h-6v-7H9v7H3z"/></svg>',search:'<svg viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="7.3"/><path d="m16.5 16.5 4.5 4.5"/></svg>',heart:'<svg viewBox="0 0 24 24"><path d="M20.5 5.8a5.1 5.1 0 0 0-7.2 0L12 7.1l-1.3-1.3a5.1 5.1 0 1 0-7.2 7.2L12 21l8.5-8a5.1 5.1 0 0 0 0-7.2z"/></svg>',wave:'<svg viewBox="0 0 24 24"><path d="M2 11v2M6 7v10M10 3v18M14 8v8M18 5v14M22 10v4"/></svg>',tv:'<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="15" rx="2" ry="2"/><polyline points="17 2 12 7 7 2"/></svg>',user:'<svg viewBox="0 0 24 24"><circle cx="12" cy="7.6" r="4"/><path d="M4.5 21v-2.5a7.5 7.5 0 0 1 15 0V21"/></svg>',back:'<svg viewBox="0 0 24 24"><path d="m14.5 5-7 7 7 7M7.5 12H21"/></svg>',shuffle:'<svg viewBox="0 0 24 24"><path d="M3 6h3c6 0 6 12 12 12h3m-4-4 4 4-4 4M3 18h3c2 0 3.4-1.5 4.6-4M14 9c1-1.6 2.2-3 4-3h3m-4-4 4 4-4 4"/></svg>',repeat:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg>',queue:'<svg viewBox="0 0 24 24"><path d="M3 5h18M3 10h18M3 15h11M3 20h9m6-5v7m-3.5-3.5h7"/></svg>',dots:'<svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg>'})[name]||'';
 const nav=()=>`<nav class="bottom-nav"><button data-nav="discover" class="${page==='discover'?'active':''}" aria-label="Discover">${glyph('home')}</button><button data-nav="search" class="${page==='search'?'active':''}" aria-label="Search">${glyph('search')}</button><button data-nav="library" class="${page==='library'||page==='playlist'||page==='album'||page==='artist'?'active':''}" aria-label="Library">${glyph('wave')}</button>${auraConnectReceivers.length>0?`<button data-open-tv-remote="1" class="${tvRemoteActive?'active':''}" aria-label="TV Remote">${glyph('tv')}</button>`:''}<button data-nav="settings" class="${page==='settings'?'active':''}" aria-label="Profile and Settings">${glyph('user')}</button></nav>`;
+const playerDock=()=>`<div class="bottom-nav player-control-dock" role="group" aria-label="Playback controls"><button data-shuffle="1" class="${shuffleEnabled?'active':''}" aria-pressed="${shuffleEnabled}" aria-label="${shuffleEnabled?'Slå av tilfeldig avspilling':'Slå på tilfeldig avspilling'}" title="Tilfeldig avspilling">${glyph('shuffle')}</button><button data-player="prev" aria-label="Forrige sang" title="Forrige">${transportIcon('previous')}</button><button class="dock-play ${playing?'is-playing':''}" data-player="toggle" aria-label="${playing?'Pause':'Spill av'}" title="${playing?'Pause':'Spill av'}">${transportIcon(playing?'pause':'play')}</button><button data-player="next" aria-label="Neste sang" title="Neste">${transportIcon('next')}</button><button data-repeat="1" class="${repeatMode?'active':''} ${repeatMode===1?'repeat-one':''}" aria-pressed="${repeatMode!==0}" aria-label="${repeatMode===0?'Gjentakelse av':repeatMode===1?'Gjenta én sang':'Gjenta alle'}" title="${repeatMode===0?'Gjenta av':repeatMode===1?'Gjenta én sang':'Gjenta alle'}">${glyph('repeat')}${repeatMode===1?'<small>1</small>':''}</button></div>`;
 const note=s=>{const t=$('#toast');if(t){t.textContent=s;t.classList.add('visible');setTimeout(()=>t.classList.remove('visible'),3700)}};
 function discover(){
  const tabs=`<div class="tab-line">${['Overview','Songs','Albums','Artists'].map(c=>`<button data-discover-tab="${c}" class="${discoverCategory===c?'selected':''}">${c}</button>`).join('')}</div>`;
@@ -576,12 +578,12 @@ function player(){
  const showLyrics=playerView==='lyrics'&&!!current;
  const linkedVideo=associatedVideo(current);
  const showVideo=playerView==='video'&&!!linkedVideo;
- const controls=`<div class="wave-timeline"><span class="stamp" id="elapsed">${fmt(nativeActive?nativePosition:audio.currentTime)}</span><div class="wave-seek"><div class="wave-lines" id="waveBars">${wave()}</div><input id="seek" aria-label="Seek" type="range" min="0" max="${(nativeActive?nativeDuration:audio.duration)||current?.duration||1}" value="${(nativeActive?nativePosition:audio.currentTime)||0}"></div><span class="stamp" id="total">${fmt((nativeActive?nativeDuration:audio.duration)||current?.duration)}</span></div><div class="player-controls"><button data-player="prev" aria-label="Previous">${transportIcon('previous')}</button><button class="big-play" data-player="toggle" aria-label="${playing?'Pause':'Play'}">${transportIcon(playing?'pause':'play')}</button><button data-player="next" aria-label="Next">${transportIcon('next')}</button><button class="cast-player-button" data-open-tv-remote="1" aria-label="Åpne TV-fjernkontroll" title="Åpne TV-fjernkontroll"><span style="font-size:18px">📺</span></button><button class="cast-player-button" data-auraplay="1" aria-label="AuraPlay · Cast til enhet" title="AuraPlay · Cast til enhet"><span style="font-size:18px;font-weight:800;color:var(--orange,#FF7A00)">✦</span></button></div><div class="player-actions"><button data-fav="${current?escape(key(current)):''}" aria-label="Favorite" class="${current&&persist.favorites.includes(key(current))?'active':''}">${glyph('heart')}</button>${current?downloadToggle(current):""}<button data-shuffle="1" class="${shuffleEnabled?'active':''}" aria-pressed="${shuffleEnabled}" aria-label="Shuffle">${glyph('shuffle')}</button><button data-repeat="1" class="${repeatMode?'active':''}" aria-pressed="${repeatMode!==0}" aria-label="Repeat ${repeatMode===1?'one':repeatMode===2?'all':'off'}">${glyph('repeat')}${repeatMode===1?'<small>1</small>':''}</button><button data-sleep-mode="1" aria-label="Sleep Mode" title="Sleep Mode"><span style="font-size:18px">🌙</span></button><button data-queue="1" class="${queueOpen?'active':''}" aria-pressed="${queueOpen}" aria-label="Play queue">${glyph('queue')}</button></div>`;
+ const controls=`<div class="wave-timeline"><span class="stamp" id="elapsed">${fmt(nativeActive?nativePosition:audio.currentTime)}</span><div class="wave-seek"><div class="wave-lines" id="waveBars">${wave()}</div><input id="seek" aria-label="Seek" type="range" min="0" max="${(nativeActive?nativeDuration:audio.duration)||current?.duration||1}" value="${(nativeActive?nativePosition:audio.currentTime)||0}"></div><span class="stamp" id="total">${fmt((nativeActive?nativeDuration:audio.duration)||current?.duration)}</span></div><div class="player-side-actions"><button class="player-side-button auraplay-side-button" data-auraplay="1" aria-label="AuraPlay · Cast til enhet" title="AuraPlay"><span aria-hidden="true">✦</span><small>AuraPlay</small></button><button class="player-side-button ${queueOpen?'active':''}" data-queue="1" aria-pressed="${queueOpen}" aria-label="Spillekø" title="Spillekø">${glyph('queue')}<small>Kø</small></button></div>`;
  const cover=`<div class="player-art">${current?img(current,'cover-large'):`<div class="cover-large missing-cover">♫</div>`}</div><div class="player-song"><h1>${escape(current?.title||'Nothing playing')}</h1><button class="artist-under-title" data-artist="${escape(current?.artist||'')}">${escape(current?.artist||'Choose a song to begin')}</button></div>`;
  const tabs=`<div class="player-mode-tabs" role="group" aria-label="Song visuals"><button data-player-view="lyrics" aria-label="Lyrics and karaoke" aria-pressed="${showLyrics}" class="${showLyrics?'active':''}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></button>${linkedVideo?`<button data-player-view="video" aria-label="Music video" aria-pressed="${showVideo}" class="${showVideo?'active':''}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 4v16M17 4v16M3 9h4M17 9h4M3 15h4M17 15h4"/><path d="m10 9 5 3-5 3z"/></svg></button>`:''}</div>`;
  const karaoke=`<div class="karaoke-lines" id="karaokeLines" aria-live="off">${lyricsMarkup()}</div>`;
  const video=`<div class="player-video"><div class="aura-video-player">${embeddedVideoMarkup(current)}</div><div class="aura-video-label"><strong>${escape(current?.title||'Music video')}</strong><small>Video linked to this song</small></div></div>`;
- return `<div class="screen-header center-head"><button class="icon-only" data-collapse-player="1">${glyph('back')}</button><strong>Now Playing</strong><button class="icon-only" ${current?`data-more="${escape(key(current))}"`:''}>${glyph('dots')}</button></div>${tabs}${showLyrics?karaoke:showVideo?video:cover}${controls}${queueOpen?`<div class="player-queue" role="region" aria-label="Current play queue"><strong>Up next · ${playQueue.length} songs</strong>${playQueue.map((track,i)=>`<button data-queue-play="${escape(key(track))}" class="${current&&key(current)===key(track)?'active':''}">${i+1}. ${escape(track.title)} <small>${escape(track.artist)}</small></button>`).join('')}</div>`:''}`;
+ return `<div class="screen-header center-head"><button class="icon-only" data-collapse-player="1" aria-label="Minimer spilleren">${glyph('back')}</button><strong>Now Playing</strong><button class="icon-only" ${current?`data-more="${escape(key(current))}"`:''} aria-label="Sangmeny">${glyph('dots')}</button></div>${tabs}${showLyrics?karaoke:showVideo?video:cover}${controls}${queueOpen?`<div class="player-queue" role="region" aria-label="Current play queue"><strong>Up next · ${playQueue.length} songs</strong>${playQueue.map((track,i)=>`<button data-queue-play="${escape(key(track))}" class="${current&&key(current)===key(track)?'active':''}">${i+1}. ${escape(track.title)} <small>${escape(track.artist)}</small></button>`).join('')}</div>`:''}`;
 }
 function transportIcon(t){const paths={play:'<path d="M9 5.5 19 12 9 18.5z" fill="currentColor" stroke="none"/>',pause:'<rect x="7" y="5" width="3.4" height="14" rx="1" fill="currentColor" stroke="none"/><rect x="13.6" y="5" width="3.4" height="14" rx="1" fill="currentColor" stroke="none"/>',previous:'<path d="M6 6v12M18 6 8 12l10 6z" fill="currentColor" stroke="none"/>',next:'<path d="M18 6v12M6 6l10 6-10 6z" fill="currentColor" stroke="none"/>'};return `<svg viewBox="0 0 24 24" aria-hidden="true">${paths[t]||''}</svg>`}
 function parseLrc(input){return String(input||'').split(/\r?\n/).flatMap(line=>{const re=/\[(\d{1,2}):(\d{2})(?:[.:](\d{1,3}))?\]/g;let m,items=[],text=line.replace(re,'').trim();while((m=re.exec(line))){const frac=m[3]?Number(('0.'+m[3])):0;items.push({time:Number(m[1])*60+Number(m[2])+frac,text})}return items}).filter(x=>x.text).sort((a,b)=>a.time-b.time)}
@@ -815,11 +817,16 @@ window.AuraConnectSendPlaylistsResult=function(json){
  try{
   const res=JSON.parse(json);
   if(res.ok){
-   auraConnectStatus='Spillelister sendt til TV ('+(res.count||0)+' sendt)!';
+   auraConnectStatus='Spillelister sendt til TV ('+(res.count||0)+' importert'+(res.skipped?.length?`, ${res.skipped.length} hoppet over`:'' )+')';
    note(auraConnectStatus);
+   const pending=pendingAuraPlaylistAction;pendingAuraPlaylistAction=null;
+   if(pending?.kind==='play')sendAuraTrackHandoff(pending.deviceId,pending.track,pending.upcoming,pending.message);
+   else if(pending?.kind==='next')sendAuraQueueBatch(pending.deviceId,pending.tracks,'next',pending.message);
+   else if(pending?.kind==='queue')sendAuraQueueBatch(pending.deviceId,pending.tracks,'end',pending.message);
   }else{
    auraConnectStatus='Sending feilet: '+(res.error||'Ukjent feil');
    note(auraConnectStatus);
+   pendingAuraPlaylistAction=null;
   }
  }catch(e){auraConnectStatus='Svarfeil: '+e.message;}
  const el=$('#auraConnectStatus');if(el)el.textContent=auraConnectStatus;
@@ -840,7 +847,14 @@ window.AuraConnectSendResult=function(json){
 window.AuraConnectControlResult=function(json){
  try{
   const res=typeof json==='string'?JSON.parse(json):json;
+  const pending=pendingAuraControlAction;
+  if(pending&&res.op===pending.op){
+   pendingAuraControlAction=null;
+   if(res.ok){if(pending.message)note(pending.message);pending.onSuccess?.(res)}
+   else{const failure=res.error||'Kunne ikke utføre kommandoen på TV-en';note(failure);pending.onFailure?.(res)}
+  }
   if(res.ok){
+   const previousTvError=tvRemoteState.error;
    tvRemoteState.playing=!!res.playing;
    tvRemoteState.loading=!!res.loading;
    tvRemoteState.shuffle=!!res.shuffle;
@@ -851,6 +865,8 @@ window.AuraConnectControlResult=function(json){
    if(res.title)tvRemoteState.title=res.title;
    if(res.artist)tvRemoteState.artist=res.artist;
    if(res.queueLength!==undefined)tvRemoteState.queueLength=Number(res.queueLength||0);
+   if(res.error)tvRemoteState.error=String(res.error);else if(res.op==='playback.status')tvRemoteState.error='';
+   if(tvRemoteState.error&&tvRemoteState.error!==previousTvError)note('AuraOS: '+tvRemoteState.error);
    if(tvRemoteActive)renderTvRemote();
   }else{
    auraConnectStatus='TV Control: '+(res.error||'Kunne ikke kontakte TV');
@@ -1010,16 +1026,16 @@ function settings(){
 const view=()=>({discover,search:searchPage,library,settings,playlist:playlistPage,playlistEditor:playlistEditPage,swipe:swipePage,player,album:albumPage,artist:artistPage,favorites:libraryFolder,downloads:libraryFolder})[page]();
 function miniMarkup(){if(!current||page==='player')return '';return `<div class="mini-player" id="miniPlayer" role="group" aria-label="Minimized music player"><div class="mini-main"><button class="mini-vinyl ${playing?'spinning':''}" data-expand-player="1" aria-label="Open player"><span class="vinyl-disc"></span><span class="vinyl-label">${current.cover?`<img src="${escape(current.cover)}" alt="">`:'♫'}</span></button><div class="mini-marquee" data-expand-player="1"><div class="mini-text"><strong>${escape(current.artist||'Unknown artist')}</strong><small>${escape(current.title||'Untitled')}</small></div></div><button class="mini-control mini-auraplay" data-auraplay="1" aria-label="AuraPlay cast" title="AuraPlay · Cast til enhet"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" stroke="#ffffff" stroke-opacity="0.4" stroke-dasharray="2 2"/><circle cx="12" cy="12" r="5" stroke="#ffffff" fill="rgba(255,255,255,0.2)"/><path d="M10.5 9.5L14.5 12L10.5 14.5V9.5Z" fill="#ffffff" stroke="none"/></svg></button><button class="mini-control mini-toggle" data-player="toggle" aria-label="${playing?'Pause':'Play'}">${playing?'Ⅱ':'▶'}</button><button class="mini-control" data-player="next" aria-label="Next">⏭</button></div><button class="mini-grab" data-expand-player="1" aria-label="Drag downward to expand player"><span></span></button></div>`}
 function arlHelpMarkup(){if(!showArlHelp)return '';const steps=[['Log in to deezer.com in your browser.'],['Open DevTools (F12) and choose Application (Chrome) or Storage (Firefox).'],['Go to Cookies → deezer.com and find the cookie named arl.'],['Copy its full value and paste it into the Deezer ARL field in Settings.']];return `<div class="arl-help-overlay" id="arlHelpOverlay" role="dialog" aria-modal="true" aria-label="How to find your ARL"><div class="arl-help-body"><h1>How to find your ARL</h1><p class="arl-warning">Your ARL is a session credential. Never share it, put it in an issue, or commit it to GitHub.</p>${steps.map((step,i)=>`<div class="arl-step"><span class="arl-step-number">${i+1}</span><p>${step[0]}</p></div>`).join('')}</div><div class="arl-help-footer"><button class="arl-help-done" data-arl-done="1">Done</button></div></div>`}
-function actionMarkup(){if(!actionTrack)return '';const s=actionTrack;const f=persist.favorites.includes(key(s));return `<div class="action-shade" data-close-actions="1"></div><div class="action-sheet" role="dialog" aria-label="Track actions"><div class="action-head">${img(s)}<div><strong>${escape(s.title)}</strong><small>${escape(s.artist)}${s.album?' · '+escape(s.album):''}</small></div><button data-close-actions="1" aria-label="Close">×</button></div><button data-action="tv-next"><span class="action-glyph">📺</span> Spill som neste på TV</button><button data-action="playlist"><span class="action-glyph">＋</span> Add to playlist</button><button data-action="favorite"><span class="action-glyph">${glyph('heart')}</span> ${f?'Remove from favorites':'Add to favorites'}</button><button data-action="info"><span class="action-glyph">ⓘ</span> Song information</button><button data-action="next"><span class="action-glyph">${glyph('next')}</span> Play next</button><button data-action="queue"><span class="action-glyph">☷</span> Add to end of queue</button><button data-action="download"><span class="action-glyph">${downloadIcon()}</span> Download offline</button></div>`}
-function render(){document.body.dataset.theme=persist.theme;window.AuraNative?.setTheme?.(persist.theme);const mount=$('.phone[data-screen="discover"] .mobile-slot');mount.innerHTML=`<div class="screen ${page==='player'?'player-screen':''} ${current&&page!=='player'?'with-mini':''}"><div class="scroll-area">${view()}</div>${page==='player'?'':nav()}${miniMarkup()}${actionMarkup()}${playlistPickerMarkup()}${arlHelpMarkup()}</div>`;$$('.phone').forEach(p=>p.classList.toggle('mobile-active',p.dataset.screen==='discover'));updateProgress();refreshDownloadQueueUi();setTimeout(syncNativeCastButton,80)}
+function actionMarkup(){if(!actionTrack)return '';const s=actionTrack;const f=persist.favorites.includes(key(s));const followed=persist.followedArtists?.includes(s.artist);const artistActions=s.artist?`<button data-action="artist-profile"><span class="action-glyph">◉</span> Se artistprofil</button><button data-action="artist-follow"><span class="action-glyph">${followed?'♥':'♡'}</span> ${followed?'Slutt å følge':'Følg'} ${escape(s.artist)}</button>`:'';const sleepAction=page==='player'?`<button data-action="sleep"><span class="action-glyph">🌙</span> Sleep Mode</button>`:'';return `<div class="action-shade" data-close-actions="1"></div><div class="action-sheet" role="dialog" aria-label="Sangmeny"><div class="action-head">${img(s)}<div><strong>${escape(s.title)}</strong><small>${escape(s.artist)}${s.album?' · '+escape(s.album):''}</small></div><button data-close-actions="1" aria-label="Lukk">×</button></div><button data-action="tv-next"><span class="action-glyph">📺</span> Spill som neste på TV</button><button data-action="tv-queue"><span class="action-glyph">☷</span> Legg til i TV-kø</button><button data-action="playlist"><span class="action-glyph">＋</span> Add to playlist</button><button data-action="favorite"><span class="action-glyph">${glyph('heart')}</span> ${f?'Remove from favorites':'Add to favorites'}</button><button data-action="info"><span class="action-glyph">ⓘ</span> Song information</button>${artistActions}<button data-action="next"><span class="action-glyph">${glyph('next')}</span> Play next</button><button data-action="queue"><span class="action-glyph">☷</span> Add to end of queue</button><button data-action="download"><span class="action-glyph">${downloadIcon()}</span> Download offline</button>${sleepAction}</div>`}
+function render(){document.body.dataset.theme=persist.theme;window.AuraNative?.setTheme?.(persist.theme);const mount=$('.phone[data-screen="discover"] .mobile-slot');const transition=playerTransition;const transitionClass=transition==='enter'?'player-entering':transition==='restore'?'nav-restoring':'';mount.innerHTML=`<div class="screen ${page==='player'?'player-screen':''} ${current&&page!=='player'?'with-mini':''} ${transitionClass}"><div class="scroll-area">${view()}</div>${page==='player'?playerDock():nav()}${miniMarkup()}${actionMarkup()}${playlistPickerMarkup()}${arlHelpMarkup()}</div>`;playerTransition='';if(transitionClass)requestAnimationFrame(()=>setTimeout(()=>$('.mobile-slot .screen')?.classList.remove(transitionClass),720));$$('.phone').forEach(p=>p.classList.toggle('mobile-active',p.dataset.screen==='discover'));updateProgress();refreshDownloadQueueUi();setTimeout(syncNativeCastButton,80)}
 function syncNativeCastButton(){
  // The visible Cast icon opens Android's native receiver picker directly.
  window.AuraNative?.hideCastButton?.();
 }
 window.addEventListener('resize',()=>setTimeout(syncNativeCastButton,60));
-function navigate(p){if(p==='player'&&current){lastPage=page==='player'?lastPage:page;collapsed=false}else if(page==='player'&&p!=='player'){collapsed=!!current;lastPage=p}page=p;render();if(p==='swipe'){swipeAnimating=false;discoveryPreviewId='';}}
-function collapsePlayer(){if(page!=='player')return;const to=lastPage==='player'?'discover':lastPage;const pane=$('.player-screen');if(pane){pane.classList.add('slide-up');setTimeout(()=>navigate(to),220)}else navigate(to)}
-function expandPlayer(){if(!current)return;lastPage=page;const mini=$('#miniPlayer');if(mini){mini.classList.add('mini-expand');setTimeout(()=>navigate('player'),200)}else navigate('player')}
+function navigate(p){if(p==='player'&&current){if(page!=='player'&&!(page==='artist'&&artistSourcePage==='player'))lastPage=page;collapsed=false;playerTransition=page==='player'?'':'enter'}else if(page==='player'&&p!=='player'){collapsed=!!current;lastPage=p;playerTransition='restore'}page=p;render();if(p==='swipe'){swipeAnimating=false;discoveryPreviewId='';}}
+function collapsePlayer(){if(page!=='player')return;const to=lastPage==='player'?'discover':lastPage;const pane=$('.player-screen');if(pane){pane.classList.add('slide-down');setTimeout(()=>navigate(to),500)}else navigate(to)}
+function expandPlayer(){if(!current)return;lastPage=page;const mini=$('#miniPlayer');if(tvRemoteActive)closeTvRemote();if(mini){mini.classList.add('mini-expand');setTimeout(()=>navigate('player'),230)}else navigate('player')}
 let sleepModeActive=false,sleepClockInterval=null;
 function updateSleepClock(){
  const hoursEl=document.querySelector('#sleepHours');
@@ -1084,7 +1100,51 @@ function renderSleepMode(){
 }
 
 let tvRemoteActive=false,tvRemoteDevice=null,tvRemotePollTimer=null;
-let tvRemoteState={title:'AuraConnect TV',artist:'Tilkoblet enhet',cover:'',playing:false,positionMs:0,durationMs:0,queueLength:0};
+let tvRemoteState={title:'AuraConnect TV',artist:'Tilkoblet enhet',cover:'',playing:false,positionMs:0,durationMs:0,queueLength:0,error:''};
+
+function sendAuraControl(deviceId,op,args,message,onSuccess,onFailure){
+ if(!deviceId)return note('Ingen TV er paret ennå. Skann QR-koden på TV-skjermen først!');
+ if(!window.AuraNative?.auraConnectControl)return note('AuraConnect er ikke tilgjengelig i denne appversjonen.');
+ if(pendingAuraControlAction)return note('AuraConnect behandler allerede en kommando. Prøv igjen om et øyeblikk.');
+ pendingAuraControlAction={op,message,onSuccess,onFailure};
+ window.AuraNative.auraConnectControl(deviceId,op,JSON.stringify(args||{}));
+}
+
+function auraTrackReference(track){return {id:key(track),title:track.title||'Untitled',artist:track.artist||'Unknown',durationMs:Math.max(0,Math.round((track.duration||0)*1000)),isrc:track.isrc||null,cover:track.cover||null}}
+
+function sendAuraTrackHandoff(deviceId,track,upcoming,message){
+ if(!track)return note('Ingen sang er valgt for AuraPlay.');
+ if(track.origin==='local')return note('Lokale filer på telefonen kan ikke spilles på TV-en ennå.');
+ const allowed=(upcoming||[]).filter(t=>t&&t.origin!=='local').slice(0,200);
+ const skipped=(upcoming||[]).filter(t=>t?.origin==='local').length;
+ const resultMessage=(message||'AuraPlay sendt til TV')+(skipped?` · ${skipped} lokale spor ble hoppet over`:'' );
+ sendAuraControl(deviceId,'playback.handoff',{track:auraTrackReference(track),upcoming:allowed.map(auraTrackReference)},resultMessage,()=>pollAuraPlaybackResult(deviceId,4));
+}
+
+function pollAuraPlaybackResult(deviceId,attempts){
+ if(attempts<=0)return;
+ setTimeout(()=>{
+  window.AuraNative?.auraConnectControl?.(deviceId,'playback.status','{}');
+  pollAuraPlaybackResult(deviceId,attempts-1);
+ },1500);
+}
+
+function sendAuraQueueBatch(deviceId,tracks,position,message){
+ const all=(tracks||[]).filter(Boolean);
+ let items=all.filter(t=>t.origin!=='local').slice(0,200);
+ const skipped=all.length-items.length;
+ if(position==='next')items=items.slice().reverse();
+ if(!items.length)return note('Ingen TV-kompatible sanger å legge i kø.');
+ let index=0;
+ const addNext=()=>{
+  const track=items[index];
+  sendAuraControl(deviceId,'queue.add',{track:auraTrackReference(track),position},'',()=>{
+   index++;
+   if(index<items.length)addNext();else if(message)note(message+(skipped?` · ${skipped} lokale spor ble hoppet over`:''));
+  });
+ };
+ addNext();
+}
 
 function pollTvStatus(){
  if(!tvRemoteActive||!tvRemoteDevice)return;
@@ -1119,6 +1179,8 @@ function renderTvRemote(){
   shell.className='tv-remote-overlay';
   document.body.appendChild(shell);
  }
+ const miniDock=$('#miniPlayer');
+ shell.style.top=miniDock?`${Math.ceil(miniDock.getBoundingClientRect().bottom)}px`:'0';
  const devName=escape(tvRemoteDevice.name||'TV');
  const trackTitle=escape(tvRemoteState.title||(current?current.title:'Ingen aktiv avspilling på TV'));
  const trackArtist=escape(tvRemoteState.artist||(current?current.artist:'AuraConnect TV Remote'));
@@ -1268,29 +1330,16 @@ function closeAuraPlayPicker(){
 async function startAuraPlayCast(deviceId){
  const target=auraConnectReceivers.find(r=>r.deviceId===deviceId)||(auraConnectReceivers[0]||{name:'TV',deviceId:deviceId});
  if(!current)return note('Spill av en sang før du kaster via AuraPlay');
+ if(current.origin==='local')return note('Lokale filer på telefonen kan ikke spilles på TV-en ennå.');
  auraPlayTarget=target;
  auraPlayActive=true;
+ tvRemoteDevice=target;
  closeAuraPlayPicker();
- note('✦ AuraPlay: Kaster «'+(current.title||'')+'» til '+(target.name||'TV')+'…');
-
- const pushPl=[{
-  id:'auraplay_'+Date.now(),
-  title:'AuraPlay: '+(current.title||'Spill av'),
-  description:'Direkte fra AuraAmp mobil',
-  tracks:[{
-   id:key(current),
-   title:current.title||'Untitled',
-   artist:current.artist||'Unknown',
-   durationMs:(current.duration||0)*1000,
-   isrc:current.isrc||null,
-   cover:current.cover||null
-  }]
- }];
-
- window.AuraNative?.auraConnectSendPlaylists?.(deviceId,JSON.stringify(pushPl));
- setTimeout(()=>window.AuraNative?.auraConnectControl?.(deviceId,'playback.play','{}'),600);
+ const at=playQueue.findIndex(track=>key(track)===key(current));
+ const upcoming=at>=0?playQueue.slice(at+1):[];
+ sendAuraTrackHandoff(deviceId,current,upcoming,`Startet «${current.title||'sporet'}» på ${target.name||'TV'} via AuraPlay ✦`);
 }
-function syncPlaybackButtons(){document.querySelectorAll('[data-shuffle]').forEach(b=>{b.classList.toggle('active',shuffleEnabled);b.setAttribute('aria-pressed',String(shuffleEnabled))});document.querySelectorAll('[data-repeat]').forEach(b=>{b.classList.toggle('active',repeatMode!==0);b.setAttribute('aria-pressed',String(repeatMode!==0))});document.querySelectorAll('[data-player="toggle"]').forEach(b=>{b.innerHTML=b.classList.contains('big-play')?transportIcon(playing?'pause':'play'):(playing?'Ⅱ':'▶');b.setAttribute('aria-label',playing?'Pause':'Play')});document.querySelectorAll('.mini-vinyl').forEach(el=>el.classList.toggle('spinning',playing));updateProgress();if(sleepModeActive)renderSleepMode();}
+function syncPlaybackButtons(){document.querySelectorAll('[data-shuffle]').forEach(b=>{b.classList.toggle('active',shuffleEnabled);b.setAttribute('aria-pressed',String(shuffleEnabled))});document.querySelectorAll('[data-repeat]').forEach(b=>{b.classList.toggle('active',repeatMode!==0);b.setAttribute('aria-pressed',String(repeatMode!==0))});document.querySelectorAll('[data-player="toggle"]').forEach(b=>{b.innerHTML=b.classList.contains('big-play')||b.classList.contains('dock-play')?transportIcon(playing?'pause':'play'):(playing?'Ⅱ':'▶');b.setAttribute('aria-label',playing?'Pause':'Play');if(b.classList.contains('dock-play'))b.title=playing?'Pause':'Spill av'});document.querySelectorAll('.mini-vinyl').forEach(el=>el.classList.toggle('spinning',playing));updateProgress();if(sleepModeActive)renderSleepMode();}
 function updateProgress(){const x=$('#elapsed'),t=$('#total'),bar=$('#seek'),waveRoot=$('#waveBars');const duration=nativeActive?(nativeDuration||current?.duration||0):(Number.isFinite(audio.duration)?audio.duration:(current?.duration||0));const position=nativeActive?nativePosition:audio.currentTime;if(x)x.textContent=fmt(position);if(t)t.textContent=fmt(duration);if(bar){bar.max=duration||1;bar.value=position||0}if(waveRoot){const n=waveRoot.children.length;const fraction=duration>0?position/duration:0;for(let i=0;i<n;i++)waveRoot.children[i].classList.toggle('elapsed',(i+.5)/n<=fraction)}updateKaraoke()}
 
 function key(s){return s.origin+'|'+s.id}
@@ -1740,11 +1789,13 @@ document.addEventListener('click',async e=>{if(e.target.closest('[data-expand-pl
    if(!pl)return note('Spilleliste ikke funnet');
    const deviceId=tvRemoteDevice?.deviceId||auraConnectReceivers[0]?.deviceId||'';
    if(!deviceId)return note('Ingen TV er paret ennå. Skann QR-koden på TV-skjermen under Innstillinger først!');
+   const tracks=(pl.tracks||[]).map(lookup).filter(Boolean);
+   if(!tracks.length)return note('Spillelisten har ingen tilgjengelige sanger.');
    const pushPl=[{
     id:pl.id,
     title:pl.name||'Spilleliste',
     description:pl.description||'',
-    tracks:(pl.tracks||[]).map(lookup).filter(Boolean).map(t=>({
+    tracks:tracks.map(t=>({
      id:key(t),
      title:t.title||'Untitled',
      artist:t.artist||'Unknown',
@@ -1753,15 +1804,13 @@ document.addEventListener('click',async e=>{if(e.target.closest('[data-expand-pl
      cover:t.cover||null
     }))
    }];
+   pendingAuraPlaylistAction=d.tvPlayPlaylist
+    ?{deviceId,kind:'play',track:tracks[0],upcoming:tracks.slice(1),message:`Startet «${pl.name}» på TV-en ▶`}
+    :d.tvNextPlaylist
+     ?{deviceId,kind:'next',tracks,message:`La «${pl.name}» inn som neste på TV-en ⏭`}
+     :{deviceId,kind:'queue',tracks,message:`La «${pl.name}» til i TV-køen ＋`};
    window.AuraNative?.auraConnectSendPlaylists?.(deviceId,JSON.stringify(pushPl));
-   if(d.tvPlayPlaylist){
-    setTimeout(()=>window.AuraNative?.auraConnectControl?.(deviceId,'playback.play','{}'),600);
-    note(`Sendte «${pl.name}» og startet avspilling på TV ▶`);
-   }else if(d.tvNextPlaylist){
-    note(`Sendte «${pl.name}» som neste på TV ⏭`);
-   }else{
-    note(`Lagt til «${pl.name}» i TV-kø ＋`);
-   }
+   note(`Sender «${pl.name}» til TV…`);
    return;
   }
   if(d.auraplay){openAuraPlayPicker();return;}
@@ -1774,17 +1823,13 @@ document.addEventListener('click',async e=>{if(e.target.closest('[data-expand-pl
    if(!targetId)return note('Ingen TV er paret ennå. Skann QR-koden på TV-skjermen under Innstillinger først!');
    if(d.tvAction==='toggle'){
     const op=tvRemoteState.playing?'playback.pause':'playback.play';
-    window.AuraNative?.auraConnectControl?.(targetId,op,'{}');
-    note(tvRemoteState.playing?'Sendte pause til TV Ⅱ':'Sendte avspilling til TV ▶');
+    sendAuraControl(targetId,op,{},tvRemoteState.playing?'Satte TV-avspilling på pause Ⅱ':'Startet TV-avspilling ▶');
    }else if(d.tvAction==='next'){
-    window.AuraNative?.auraConnectControl?.(targetId,'playback.next','{}');
-    note('Sendte neste sang til TV ⏭');
+    sendAuraControl(targetId,'playback.next',{},'Hoppet til neste sang på TV ⏭');
    }else if(d.tvAction==='prev'){
-    window.AuraNative?.auraConnectControl?.(targetId,'playback.previous','{}');
-    note('Sendte forrige sang til TV ⏮');
+    sendAuraControl(targetId,'playback.previous',{},'Gikk til forrige sang på TV ⏮');
    }else if(d.tvAction==='clear-queue'){
-    window.AuraNative?.auraConnectControl?.(targetId,'queue.clear','{}');
-    note('Sendte kommando om å tømme TV-kø ×');
+    sendAuraControl(targetId,'queue.clear',{},'Tømte TV-køen ×');
    }
    return;
   }
@@ -1809,21 +1854,32 @@ document.addEventListener('click',async e=>{if(e.target.closest('[data-expand-pl
   if(d.artistActions){note('Artist: '+(artistDetail?.name||''));return}
   if(d.artist){const seed=[...results,...home.top,...home.trending,...localSongs].find(x=>x.artist?.toLowerCase()===d.artist.toLowerCase());await openArtist(d.artist,seed);return}
   if(d.closeActions){actionTrack=null;render();return}
-  if(d.action){const item=actionTrack;if(!item)return;actionTrack=null;if(d.action==='tv-next'){
-   if(!auraConnectReceivers.length)return note('Ingen TV er paret ennå. Skann QR-koden på TV-skjermen under Innstillinger først!');
-   const targetId=auraConnectReceivers[0].deviceId;
-   const pushPl=[{id:'play_next_'+Date.now(),title:'Spill som neste',description:'Sendt fra mobil',tracks:[{id:key(item),title:item.title||'Untitled',artist:item.artist||'Unknown',durationMs:(item.duration||0)*1000,isrc:item.isrc||null,cover:item.cover||null}]}];
-   window.AuraNative?.auraConnectSendPlaylists?.(targetId,JSON.stringify(pushPl));
-   note(`Sendte «${item.title}» som neste til TV 📺`);
+  if(d.action==='artist-follow'){
+   const item=actionTrack;actionTrack=null;if(!item?.artist)return;
+   persist.followedArtists=persist.followedArtists||[];
+   const isFollowed=persist.followedArtists.includes(item.artist);
+   persist.followedArtists=isFollowed?persist.followedArtists.filter(name=>name!==item.artist):[...persist.followedArtists,item.artist];
+   saveProfile();note(isFollowed?'Sluttet å følge '+item.artist:'Følger '+item.artist);render();return;
+  }
+  if(d.action==='sleep'){
+   actionTrack=null;render();openSleepMode();return;
+  }
+  if(d.action==='artist-profile'){
+   const item=actionTrack;actionTrack=null;if(!item?.artist)return;
+   void openArtist(item.artist,item);return;
+  }
+  if(d.action){const item=actionTrack;if(!item)return;actionTrack=null;if(d.action==='tv-next'||d.action==='tv-queue'){
+   if(item.origin==='local')return note('Lokale filer på telefonen kan ikke legges i TV-køen ennå.');
+   const targetId=tvRemoteDevice?.deviceId||auraPlayTarget?.deviceId||auraConnectReceivers[0]?.deviceId||'';
+   const position=d.action==='tv-next'?'next':'end';
+   sendAuraControl(targetId,'queue.add',{track:auraTrackReference(item),position},d.action==='tv-next'?`La «${item.title}» inn som neste på TV-en ⏭`:`La «${item.title}» til i TV-køen ＋`);
    return;
   }else if(d.action==='playlist')addToPlaylist(item);else if(d.action==='favorite'){persist.favorites=persist.favorites.includes(key(item))?persist.favorites.filter(k=>k!==key(item)):[...persist.favorites,key(item)];saveProfile();note('Favorites updated')}else if(d.action==='info'){window.alert([item.title,item.artist,item.album||'Album not provided',item.duration?fmt(item.duration):'Duration unknown',item.quality||'Quality set by music source'].join('\n'))}else if(d.action==='next'){queueNext(item);note('Added to play next')}else if(d.action==='queue'){playQueue.push(item);lastUpcomingId='';if(current)void scheduleNativeQueue(current);note('Added to end of queue')}else if(d.action==='download')await download(item);render();return}
   if(d.tvNext){
    if(!current)return note('Ingen sang spilles av');
-   if(!auraConnectReceivers.length)return note('Ingen TV er paret ennå. Skann QR-koden på TV-skjermen under Innstillinger først!');
-   const targetId=auraConnectReceivers[0].deviceId;
-   const pushPl=[{id:'play_next_'+Date.now(),title:'Spill som neste',description:'Sendt fra mobil',tracks:[{id:key(current),title:current.title||'Untitled',artist:current.artist||'Unknown',durationMs:(current.duration||0)*1000,isrc:current.isrc||null,cover:current.cover||null}]}];
-   window.AuraNative?.auraConnectSendPlaylists?.(targetId,JSON.stringify(pushPl));
-   note(`Sendte «${current.title}» som neste til TV 📺`);
+   if(current.origin==='local')return note('Lokale filer på telefonen kan ikke legges i TV-køen ennå.');
+   const targetId=tvRemoteDevice?.deviceId||auraPlayTarget?.deviceId||auraConnectReceivers[0]?.deviceId||'';
+   sendAuraControl(targetId,'queue.add',{track:auraTrackReference(current),position:'next'},`La «${current.title}» inn som neste på TV-en ⏭`);
    return;
   }
   if(d.playNext){const item=lookup(d.playNext);if(item){queueNext(item);note('Added to play next');render()}return}if(d.more){actionTrack=lookup(d.more);render();return}

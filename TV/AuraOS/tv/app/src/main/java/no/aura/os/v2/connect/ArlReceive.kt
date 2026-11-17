@@ -1,5 +1,6 @@
 package no.aura.os.v2.connect
 
+import no.aura.cortex.AuraConnectContract
 import no.aura.os.v2.amp.AmpAccess
 import no.aura.os.v2.amp.AmpProviderProblem
 import no.aura.os.v2.amp.AmpProviderSafety
@@ -15,8 +16,8 @@ import java.util.concurrent.atomic.AtomicBoolean
  * "renew": <bool> }`. The credential is never echoed, logged or put in an error message.
  */
 object ArlOffer {
-    const val OP = "credential.offer"
-    const val KIND = "deezer-arl"
+    const val OP = AuraConnectContract.CREDENTIAL_OFFER
+    const val KIND = AuraConnectContract.DEEZER_ARL_KIND
     /** The only permission a phone gets from this flow: it can hand over a credential, nothing else (no playback, no sync). */
     val GRANT: Set<Permission> = setOf(Permission.CREDENTIAL_RECEIVE)
 }

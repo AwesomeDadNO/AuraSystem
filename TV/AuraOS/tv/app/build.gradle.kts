@@ -110,6 +110,7 @@ dependencies {
     implementation("androidx.compose.foundation:foundation")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.material:material-icons-extended")
+    implementation("com.google.zxing:core:3.5.3")
     // Demo Task 01 has no network, no image loader, no player: Demo Mode draws its artwork procedurally.
     testImplementation("junit:junit:4.13.2")
     // Real org.json on the JVM for unit tests (Android's copy is a stub there); used by the AURA Connect v1 import test.

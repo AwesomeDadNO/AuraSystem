@@ -4,7 +4,7 @@ package no.aura.os.v2.settings
 enum class ConnectionId(val title: String, val plannedIn: String) {
     TMDB("TMDB", "F4"), YOUTUBE("YouTube", "F4c"), ULTRAMAX("UltraMax", "F5"), ECLIPSE("Eclipse", "F7"),
     PLEX("Plex", "F10"), JELLYFIN("Jellyfin", "F10"), EMBY("Emby", "F10"), SIMKL("Simkl", "F9"), AURAMUSIC("AuraMusic", "F6L"),
-    AURACONNECT("AuraConnect", "reserved until its security review"),
+    AURACONNECT("AuraConnect", "ready"),
 }
 
 enum class ConnectionState(val label: String) {
@@ -29,7 +29,7 @@ interface ConnectionRegistry {
 /** F2: no integration exists, so nothing is configured and nothing can be Connected. */
 object NotConfiguredConnections : ConnectionRegistry {
     override fun statuses() = ConnectionId.values().map {
-        ConnectionStatus(it, ConnectionState.NOT_CONFIGURED, message = if (it == ConnectionId.AURACONNECT) "Reserved until its security review" else null)
+        ConnectionStatus(it, ConnectionState.NOT_CONFIGURED, message = if (it == ConnectionId.AURACONNECT) "No devices paired" else null)
     }
 }
 

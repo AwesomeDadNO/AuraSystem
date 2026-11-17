@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.aura.amp.app-mergeDebugResources-68:/values-v30/values-v30.xml",
+            "outputFile": "com.aura.amp.app-mergeDebugResources-70:/values-v30/values-v30.xml",
             "map": [
                 {
                     "source": "/Users/awesomedad/.gradle/caches/8.14.6/transforms/69be86eea7438f4e3093ae6b5d57e280/transformed/material3-release/res/values-v30/values-v30.xml",

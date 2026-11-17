@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.aura.amp.app-mergeDebugResources-68:/values-h720dp-v13/values-h720dp-v13.xml",
+            "outputFile": "com.aura.amp.app-mergeDebugResources-70:/values-h720dp-v13/values-h720dp-v13.xml",
             "map": [
                 {
-                    "source": "/Users/awesomedad/.gradle/caches/8.14.6/transforms/b0acee06ec78a6efa5fe08353909c963/transformed/appcompat-1.6.1/res/values-h720dp-v13/values-h720dp-v13.xml",
+                    "source": "/Users/awesomedad/.gradle/caches/8.14.6/transforms/dc849486f3734c3785bf9fd1c82d839d/transformed/appcompat-1.7.0/res/values-h720dp-v13/values-h720dp-v13.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",
