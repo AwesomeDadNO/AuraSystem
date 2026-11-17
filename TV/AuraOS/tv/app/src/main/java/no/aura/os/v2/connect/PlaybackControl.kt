@@ -1,13 +1,9 @@
 package no.aura.os.v2.connect
 
-import no.aura.connect.core.CommandContext
-import no.aura.connect.core.CommandHandler
-import no.aura.connect.core.ErrorCode
-import no.aura.connect.core.ProtocolException
 
 /**
  * Remote control of the TV's AuraAmp player from a paired phone. The operations (`playback.*`, `queue.*`) are granted by an ordinary pair
- * (PLAYBACK_CONTROL / QUEUE_EDIT in [no.aura.connect.core.Permission.DEFAULT_CONTROLLER]) — no extra consent: controlling your own music on
+ * (PLAYBACK_CONTROL / QUEUE_EDIT in [Permission.DEFAULT_CONTROLLER]) — no extra consent: controlling your own music on
  * your own TV. The core already validates the numeric arguments (seek position, queue indices) before a command reaches here.
  *
  * [PlaybackTarget] is the seam the shell backs with the live [no.aura.os.v2.amp.AmpPlayback] (every call marshalled to the main thread,

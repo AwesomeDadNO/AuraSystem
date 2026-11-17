@@ -99,7 +99,6 @@ android {
 dependencies {
     // Media3 1.4.1 officially compiles with SDK 34; keep the existing SDK/AGP/Kotlin toolchain.
     // AuraConnect adapter (brings the shared core and BouncyCastle 1.80.2, whose jar hash the core build verifies).
-    implementation("no.aura.connect:auraconnect-android:3.0.0-ac2")
     implementation("no.aura.music:auramusic-engine:1.0.0")
     implementation("androidx.media3:media3-exoplayer:1.4.1")
     implementation("androidx.media3:media3-exoplayer-hls:1.4.1")

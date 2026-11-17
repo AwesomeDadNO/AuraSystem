@@ -6,6 +6,6 @@ dependencyResolutionManagement {
 rootProject.name = "AuraOS-v2-TV"
 include(":app")
 // AuraCortex shared logic and engines (built from source).
-includeBuild("../../../AuraCortex/AuraConnect")
-includeBuild("../../../AuraCortex/AuraMusicEngine")
+// Musikkmotoren TV-appen er bygget mot (no.aura.music:auramusic-engine) ligger i AURA-Ecosystem.
+includeBuild("../../../../AURA-Ecosystem/packages/auramusic-engine")
 includeBuild("../../../AuraCortex/AuraOSEngine")

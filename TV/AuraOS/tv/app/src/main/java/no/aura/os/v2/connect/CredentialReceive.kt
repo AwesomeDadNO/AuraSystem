@@ -1,23 +1,18 @@
 package no.aura.os.v2.connect
 
-import no.aura.connect.android.FileTrustStore
-import no.aura.connect.core.CommandContext
-import no.aura.connect.core.CommandHandler
-import no.aura.connect.core.ErrorCode
-import no.aura.connect.core.Permission
-import no.aura.connect.core.ProtocolException
 import no.aura.os.v2.amp.AmpVerification
 
 /**
  * Receiving a Deezer ARL (or, later, a media-server login) from an already-paired phone over the persistent channel.
  *
- * A pair never carries CREDENTIAL_RECEIVE (see [PairingReceiver]), so a phone cannot push a credential just by being paired. The person first
+ * A pair never carries CREDENTIAL_RECEIVE (see AuraShell + coretex.kt), so a phone cannot push a credential just by being paired. The person first
  * chooses, on the TV, to receive a sign-in from a specific device; that **arms** a short window which adds CREDENTIAL_RECEIVE to that one
  * device's grant. The phone then sends one `credential.offer`; [ArmedCredentialHandler] stores it, runs the Eclipse check, and **disarms** at
  * once, so the permission is gone again. All the rest (profile match, Administrator session, one-per-session, ARL validation, the Eclipse
  * check) is the F6i [ArlOfferHandler]; this only toggles the extra permission around a single transfer.
  */
-class CredentialGrantWindow(private val store: FileTrustStore, private val clock: () -> Long = System::currentTimeMillis) {
+class CredentialGrantWindow(private val clock: () -> Long = System::currentTimeMillis) {
+    private val connect get() = no.aura.cortex.AuraCortex.connect
     @Volatile private var armedDeviceId: String? = null
     @Volatile private var armedUntilMs: Long = 0L
 
@@ -26,15 +21,15 @@ class CredentialGrantWindow(private val store: FileTrustStore, private val clock
 
     /** Adds CREDENTIAL_RECEIVE to [deviceId]'s grant for [ttlMs]. Returns false if the device is unknown or revoked. */
     fun arm(deviceId: String, ttlMs: Long = 120_000L): Boolean {
-        val record = store.list().firstOrNull { it.deviceId == deviceId && !it.isRevoked } ?: return false
-        if (!store.setPermissions(deviceId, record.permissions + Permission.CREDENTIAL_RECEIVE)) return false
+        val record = connect.pairedDevice(deviceId) ?: return false
+        connect.setPermissions(deviceId, record.permissions + Permission.CREDENTIAL_RECEIVE)
         armedDeviceId = deviceId; armedUntilMs = clock() + ttlMs
         return true
     }
 
     /** Removes CREDENTIAL_RECEIVE from [deviceId]'s grant (back to an ordinary pair). Safe to call more than once. */
     fun disarm(deviceId: String) {
-        store.list().firstOrNull { it.deviceId == deviceId && !it.isRevoked }?.let { store.setPermissions(deviceId, it.permissions - Permission.CREDENTIAL_RECEIVE) }
+        connect.pairedDevice(deviceId)?.let { connect.setPermissions(deviceId, it.permissions - Permission.CREDENTIAL_RECEIVE) }
         if (armedDeviceId == deviceId) { armedDeviceId = null; armedUntilMs = 0L }
     }
 }

@@ -1,9 +1,5 @@
 package no.aura.os.v2.connect
 
-import no.aura.connect.core.CommandContext
-import no.aura.connect.core.CommandHandler
-import no.aura.connect.core.ErrorCode
-import no.aura.connect.core.ProtocolException
 import no.aura.os.v2.mediaserver.ServerAccount
 import no.aura.os.v2.mediaserver.ServerAddress
 import no.aura.os.v2.mediaserver.ServerKind

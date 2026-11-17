@@ -1,9 +1,5 @@
 package no.aura.os.v2.connect
 
-import no.aura.connect.core.CommandContext
-import no.aura.connect.core.CommandHandler
-import no.aura.connect.core.ErrorCode
-import no.aura.connect.core.ProtocolException
 import java.security.MessageDigest
 
 /**
