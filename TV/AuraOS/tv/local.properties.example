@@ -1,0 +1,30 @@
+# AuraOS V2 local configuration template
+# Copy desired entries into AuraOS/tv/local.properties (git-ignored).
+# Never commit populated local.properties or paste secrets into PR comments.
+# Android SDK path is machine-specific and unrelated to AuraOS:
+# sdk.dir=/path/to/your/Android/sdk
+
+TMDB_READ_TOKEN=
+YOUTUBE_API_KEY=
+SIMKL_CLIENT_ID=
+
+# Google Cloud Console: create a "TVs and Limited Input devices" OAuth client.
+# YouTube public API key above does NOT authorize private YouTube account data.
+# Client secret may be required by the Google OAuth client registration, but
+# any value compiled into a TV APK is recoverable. Treat private perf builds accordingly.
+GOOGLE_TV_OAUTH_CLIENT_ID=
+GOOGLE_TV_OAUTH_CLIENT_SECRET=
+
+# Optional future licensed EPG/TV guide provider — these are not active yet.
+# EPG_API_BASE_URL=
+# EPG_API_KEY=
+
+# Optional signed update NOTICE channel (no automatic download/install).
+# JSON envelope: base64 UTF-8 payload + SHA256withRSA signature. Public key is base64 X509 DER.
+# Payload appId/channel/versionCode/versionName/publishedAt must match this app and build channel.
+AURAOS_UPDATE_MANIFEST_URL=
+AURAOS_UPDATE_PUBLIC_KEY=
+
+# AuraConnect "Connect via phone" (receive a Deezer sign-in from the phone). Off unless this line is present and true.
+# Private debug/perf builds only; release ignores it. Leave it out until you want to test pairing.
+# AURACONNECT_PAIRING=true

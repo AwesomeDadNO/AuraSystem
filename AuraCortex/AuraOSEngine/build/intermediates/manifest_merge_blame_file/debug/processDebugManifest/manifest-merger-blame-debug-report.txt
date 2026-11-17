@@ -1,0 +1,200 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="no.aura.os.v2" >
+4
+5    <uses-sdk android:minSdkVersion="26" />
+6
+7    <uses-permission android:name="android.permission.INTERNET" />
+7-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:3:5-67
+7-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:3:22-64
+8
+9    <uses-feature
+9-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:4:5-86
+10        android:name="android.software.leanback"
+10-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:4:19-59
+11        android:required="true" />
+11-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:4:60-83
+12    <uses-feature
+12-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:5:5-90
+13        android:name="android.hardware.touchscreen"
+13-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:5:19-62
+14        android:required="false" />
+14-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:5:63-87
+15    <!--
+16         Public TV listings access is requested only after profile opt-in. No storage, location or account access. Package visibility: Leanback launcher apps and known streaming packages;
+17         Broad package visibility is deliberately not requested.
+18    -->
+19    <queries>
+19-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:8:5-24:15
+20        <intent>
+20-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:9:9-12:18
+21            <action android:name="android.intent.action.MAIN" />
+21-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:10:13-65
+21-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:10:21-62
+22
+23            <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
+23-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:11:13-82
+23-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:11:23-79
+24        </intent>
+25        <intent>
+25-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:13:9-16:18
+26            <action android:name="android.intent.action.MAIN" />
+26-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:10:13-65
+26-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:10:21-62
+27
+28            <category android:name="android.intent.category.HOME" />
+28-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:15:13-69
+28-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:15:23-66
+29        </intent>
+30
+31        <package android:name="com.google.android.youtube.tv" />
+31-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:17:9-65
+31-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:17:18-62
+32        <package android:name="com.netflix.ninja" />
+32-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:18:9-53
+32-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:18:18-50
+33        <package android:name="com.amazon.amazonvideo.livingroom" />
+33-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:19:9-69
+33-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:19:18-66
+34        <package android:name="com.amazon.avod" />
+34-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:20:9-51
+34-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:20:18-48
+35        <package android:name="com.disney.disneyplus" />
+35-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:21:9-57
+35-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:21:18-54
+36        <package android:name="com.wbd.stream" />
+36-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:22:9-50
+36-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:22:18-47
+37        <package android:name="com.hbo.hbonow" />
+37-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:23:9-50
+37-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:23:18-47
+38    </queries>
+39    <!--
+40         usesCleartextTraffic (owner decision 2026-11-12, F6h): home Jellyfin/Emby/Plex servers commonly answer only on http://<LAN address>.
+41         Android cannot scope cleartext to private address ranges, so the permission is app-wide and the gate is in code:
+42         mediaserver/ServerAddress allows http ONLY for a private-LAN host that the person approved for that server, never for a public
+43         host. Every other client in this app uses a fixed https:// URL and follows no redirects.
+44    -->
+45    <!-- Android 14 requires network-state permission for JobScheduler network constraints. -->
+46    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+46-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:30:5-79
+46-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:30:22-76
+47    <uses-permission android:name="com.android.providers.tv.permission.WRITE_EPG_DATA" />
+47-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:31:5-90
+47-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:31:22-87
+48    <uses-permission android:name="android.permission.READ_TV_LISTINGS" />
+48-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:32:5-75
+48-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:32:22-72
+49    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+49-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:33:5-80
+49-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:33:22-77
+50    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+50-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:34:5-75
+50-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:34:22-72
+51
+52    <application
+52-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:35:5-66:19
+53        android:allowBackup="false"
+53-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:38:9-36
+54        android:banner="@drawable/banner"
+54-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:37:9-42
+55        android:label="AuraOS v2 Demo"
+55-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:36:9-39
+56        android:theme="@style/Theme.AuraOSv2"
+56-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:40:9-46
+57        android:usesCleartextTraffic="true" >
+57-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:39:9-44
+58        <service
+58-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:41:9-167
+59            android:name="no.aura.os.v2.notifications.NotificationRefreshJob"
+59-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:41:18-83
+60            android:exported="true"
+60-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:41:141-164
+61            android:permission="android.permission.BIND_JOB_SERVICE" />
+61-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:41:84-140
+62        <service
+62-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:42:9-44:19
+63            android:name="no.aura.os.v2.notifications.AuraNotificationListener"
+63-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:42:18-85
+64            android:exported="true"
+64-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:42:204-227
+65            android:label="AuraOS notification access"
+65-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:42:86-128
+66            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE" >
+66-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:42:129-203
+67            <intent-filter>
+67-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:43:13-126
+68                <action android:name="android.service.notification.NotificationListenerService" />
+68-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:43:28-110
+68-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:43:36-107
+69            </intent-filter>
+70        </service>
+71        <service
+71-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:45:9-50:19
+72            android:name="no.aura.os.v2.launcher.AuraHomeShortcutService"
+72-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:45:18-79
+73            android:exported="true"
+73-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:47:80-103
+74            android:label="@string/home_shortcut_label"
+74-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:46:13-56
+75            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE" >
+75-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:47:13-79
+76            <intent-filter>
+76-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:48:13-119
+77                <action android:name="android.accessibilityservice.AccessibilityService" />
+77-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:48:28-103
+77-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:48:36-100
+78            </intent-filter>
+79
+80            <meta-data
+80-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:49:13-116
+81                android:name="android.accessibilityservice"
+81-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:49:24-67
+82                android:resource="@xml/home_shortcut_service" />
+82-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:49:68-113
+83        </service>
+84
+85        <activity
+85-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:51:9-64:20
+86            android:name="no.aura.os.v2.MainActivity"
+86-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:52:13-54
+87            android:configChanges="orientation|screenSize|keyboard|keyboardHidden|navigation"
+87-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:54:13-94
+88            android:exported="true" >
+88-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:53:13-36
+89            <intent-filter>
+89-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:55:13-59:29
+90                <action android:name="android.intent.action.MAIN" />
+90-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:10:13-65
+90-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:10:21-62
+91
+92                <category android:name="android.intent.category.HOME" />
+92-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:15:13-69
+92-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:15:23-66
+93                <category android:name="android.intent.category.DEFAULT" />
+93-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:58:17-76
+93-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:58:27-73
+94            </intent-filter>
+95            <intent-filter>
+95-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:60:13-63:29
+96                <action android:name="android.intent.action.MAIN" />
+96-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:10:13-65
+96-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:10:21-62
+97
+98                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
+98-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:11:13-82
+98-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:11:23-79
+99            </intent-filter>
+100        </activity>
+101
+102        <service
+102-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:65:9-137
+103            android:name="no.aura.os.v2.simkl.SimklSyncJob"
+103-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:65:18-52
+104            android:exported="false"
+104-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:65:53-77
+105            android:permission="android.permission.BIND_JOB_SERVICE" />
+105-->/Users/awesomedad/Documents/GitHub/AuraSystem/TV/AuraOS/v2/tv/Modules/AuraOSEngine/src/main/AndroidManifest.xml:65:78-134
+106    </application>
+107
+108</manifest>

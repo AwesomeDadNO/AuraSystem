@@ -1,0 +1,23 @@
+const assert=require('node:assert/strict');
+const fs=require('node:fs');const vm=require('node:vm');
+const src=fs.readFileSync(__dirname+'/../app/src/main/assets/app.js','utf8');
+const between=(a,b)=>src.slice(src.indexOf(a),src.indexOf(b));
+assert.match(src,/if\(page==='playlist'\).*?setQueue\(\(pl\?\.tracks\|\|\[\]\)\.map\(lookup\)/);
+assert.match(src,/if\(d\.playList\).*?const tracks=\(p\?\.tracks\|\|\[\]\)\.map\(lookup\)\.filter\(Boolean\);if\(!tracks\.length\).*?setQueue\(tracks/);
+assert.match(src,/window\.AuraOfflineIndex/);
+assert.match(src,/aura-offline:\/\//);
+assert.doesNotMatch(src,/if\(!s\.downloadAllowed\)\{/);
+const defs=between('function setQueue(', 'function profileKey(');
+const context={page:'playlist',repeatMode:0,playQueue:[],activeQueueSource:'',queueSerial:0,current:null,playing:false,nativePosition:0,nativeDuration:0,nativeActive:false,nativePlayback:false, persist:{history:[]}, audio:{src:'',play:async()=>{}},window:{},remember:()=>{},resolve:async()=>'',key:x=>x.origin+'|'+x.id,scheduleNativeQueue:()=>{},saveProfile:()=>{},navigate:()=>{},note:()=>{},playbackUrl:async()=>'',};
+vm.createContext(context);
+vm.runInContext(defs.replace(/async function play\(s(?:,stayOnSwipe=false)?\)\{[\s\S]*?\nasync function next/, 'async function play(s){current=s;}\nasync function next'),context);
+const tracks=[1,2,3,4,5].map(n=>({origin:'ultramax',id:String(n)}));
+(async()=>{
+ context.setQueue(tracks,'playlist:abc');context.current=tracks[2];
+ await context.next();assert.equal(context.current.id,'4');
+ await context.next();assert.equal(context.current.id,'5');
+ await context.next();assert.equal(context.current.id,'5','end must not wrap to a random song');
+ await context.prev();assert.equal(context.current.id,'4');
+ assert.equal(context.activeQueueSource,'playlist:abc');
+ console.log('PASS playlist sequence 3→4→5, end of queue, previous 5→4 and offline API presence');
+})().catch(e=>{console.error(e);process.exit(1)});

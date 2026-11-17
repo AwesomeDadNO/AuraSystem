@@ -1,0 +1,4 @@
+- `[ ]` Create AuraMusicEngine library module structure (`build.gradle`, `AndroidManifest.xml`) at `/Users/awesomedad/Documents/GitHub/AuraSystem/AuraCore/AuraMusicEngine`
+- `[ ]` Move core services and logic files (`AuraMediaService.java`, `LanSync.java`, `AuraConnectClient.kt`, `SpotifyImport.java`, `AuraCast.java`, `AuraCastOptionsProvider.java`, `AuraCredentialVault.java`, `AuraUpdateAgent.java`, `AuraWidget.java`) from `v2/app` to `AuraMusicEngine`
+- `[ ]` Update `v2/settings.gradle` and `v2/app/build.gradle` to wire up `AuraMusicEngine` as an included build / module dependency
+- `[ ]` Clean up `v2/app` by removing migrated classes and verifying compilation

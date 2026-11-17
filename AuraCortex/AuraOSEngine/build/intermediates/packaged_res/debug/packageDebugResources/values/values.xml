@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="aura_background">#1A1D24</color>
+    <string name="home_shortcut_description">Optional device-wide shortcut: opens Aura when the validated stock Home screen appears, including after Back. Requires separate consent inside Aura. Reads window package/class metadata only, no screen content or keys. Default Home is preferred. Disable in Aura and revoke this service here at any time. Some TVs may block opening Aura.</string>
+    <string name="home_shortcut_label">AuraOS Home shortcut</string>
+    <style name="Theme.AuraOSv2" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/aura_background</item>
+        <item name="android:statusBarColor">@color/aura_background</item>
+        <item name="android:navigationBarColor">@color/aura_background</item>
+    </style>
+</resources>

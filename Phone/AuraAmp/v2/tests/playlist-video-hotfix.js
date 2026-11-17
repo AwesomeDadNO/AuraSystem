@@ -1,0 +1,20 @@
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const src=fs.readFileSync(path.join(__dirname,'../app/src/main/assets/app.js'),'utf8');
+const html=fs.readFileSync(path.join(__dirname,'../app/src/main/assets/index.html'),'utf8');
+const start=src.indexOf('function playlistPage()');
+const end=src.indexOf('let playlistEditorId=',start);
+const toolbar=src.slice(start,end);
+const sequence=['data-play-list','data-shuffle-list','data-add-tracks','data-edit-playlist','data-download-playlist'];
+let previous=-1;
+for(const token of sequence){const idx=toolbar.indexOf(token);assert.ok(idx>previous,'Playlist button missing or out of order: '+token);previous=idx;}
+assert.ok(!toolbar.includes('playlist-utility'), 'No separate edit/download toolbar');
+assert.match(html,/\.playlist-buttons\{display:flex!important/);
+assert.match(src,/function associatedVideo\(track\)/);
+assert.match(src,/const linkedVideo=associatedVideo\(current\)/);
+assert.ok(src.includes('${linkedVideo?`<button data-player-view="video"'), 'Video button requires linked metadata');
+assert.doesNotMatch(src,/data-watch-video=/);
+assert.match(src,/class="aura-video-embed"/);
+assert.match(src,/if\(nextView==='video'\)pauseAudioForVideo\(\)/);
+console.log('PASS playlist buttons 5-in-a-row and metadata-linked in-player video');

@@ -1,0 +1,13 @@
+/* AURA AMP local music tag reader. No CDN / network. */
+window.AuraTags = (()=>{
+ const utf8 = new TextDecoder('utf-8');
+ const latin = new TextDecoder('iso-8859-1');
+ const decode=(b,enc)=>{if(!b?.length)return '';try{if(enc===1)return new TextDecoder('utf-16').decode(b).replace(/\0/g,'').trim();if(enc===2)return new TextDecoder('utf-16be').decode(b).replace(/\0/g,'').trim();return (enc===0?latin:utf8).decode(b).replace(/\0/g,'').trim()}catch{return ''}};
+ const be=(d,o,n=4)=>{let v=0;for(let k=0;k<n;k++)v=v*256+(d[o+k]||0);return v};
+ const ascii=(d,a,b)=>String.fromCharCode(...d.slice(a,b));
+ const artBlob=(data,type)=>new Blob([data],{type:type||'image/jpeg'});
+ function mp3(d){const out={};if(ascii(d,0,3)!=='ID3')return out;const ver=d[3];const syn=o=>((d[o]&127)<<21)|((d[o+1]&127)<<14)|((d[o+2]&127)<<7)|(d[o+3]&127);const size=syn(6);let o=10;const end=Math.min(10+size,d.length);while(o+10<=end){const tag=ascii(d,o,o+4);if(!/^[A-Z0-9]{4}$/.test(tag))break;const n=ver===4?syn(o+4):be(d,o+4);if(n<1||o+10+n>end)break;const v=d.slice(o+10,o+10+n);if(tag==='TIT2')out.title=decode(v.slice(1),v[0]);if(tag==='TPE1')out.artist=decode(v.slice(1),v[0]);if(tag==='TALB')out.album=decode(v.slice(1),v[0]);if(tag==='TRCK')out.trackNumber=decode(v.slice(1),v[0]);if(tag==='APIC'&&v.length>10){const zero=v.indexOf(0,1);const mime=decode(v.slice(1,zero),0);let p=zero+2;while(p<v.length&&v[p]!==0)p++;p++;if(v[0]===1&&v[p]===0)p+=1;if(p<v.length)out.coverBlob=artBlob(v.slice(p),mime)}o+=10+n}return out}
+ function mp4(d){const out={};const boxes=(start,end,depth=0)=>{if(depth>8)return;let o=start;while(o+8<=end){let n=be(d,o);const k=ascii(d,o+4,o+8);if(n===0)n=end-o;if(n===1||n<8||o+n>end)break;const b=o+8,e=o+n;if(['moov','udta','ilst','meta'].includes(k)){boxes(k==='meta'?b+4:b,e,depth+1)}else if(['\u00a9nam','\u00a9ART','aART','\u00a9alb','covr'].includes(k)){for(let p=b;p+16<e;p++){if(ascii(d,p+4,p+8)!=='data')continue;const valueStart=p+16,size=be(d,p);if(size<16||p+size>e)break;const content=d.slice(valueStart,p+size);if(k==='covr')out.coverBlob=artBlob(content,d[p+11]===14?'image/png':'image/jpeg');else {const value=utf8.decode(content).replace(/\0/g,'').trim();if(k==='\u00a9nam')out.title=value;if(k==='\u00a9ART'||k==='aART')out.artist=value;if(k==='\u00a9alb')out.album=value}break}}o+=n}};boxes(0,d.length);return out}
+ async function read(file){const slice=new Uint8Array(await file.slice(0,Math.min(file.size,8*1024*1024)).arrayBuffer());let tags={};try{if(ascii(slice,0,3)==='ID3')tags=mp3(slice);else if(/\.(m4a|mp4)$/i.test(file.name))tags=mp4(slice)}catch(e){console.warn('Audio metadata parse failed',e)}return tags}
+ return {read};
+})();

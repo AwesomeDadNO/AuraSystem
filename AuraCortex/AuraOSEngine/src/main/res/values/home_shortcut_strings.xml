@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="home_shortcut_label">AuraOS Home shortcut</string>
+    <string name="home_shortcut_description">Optional device-wide shortcut: opens Aura when the validated stock Home screen appears, including after Back. Requires separate consent inside Aura. Reads window package/class metadata only, no screen content or keys. Default Home is preferred. Disable in Aura and revoke this service here at any time. Some TVs may block opening Aura.</string>
+</resources>

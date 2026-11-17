@@ -1,0 +1,600 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#f8f8f8"><meta name="description" content="AURA AMP v1.2.1 Alpha – Flat UIX music app"><title>AURA AMP v1.3.4 Alpha</title><style>
+:root{font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;--orange:#FF7A00;--orange2:#ff8b39;--canvas:#fbf8f7;--phone:#ffffff;--ink:#141621;--secondary:#898a94;--divider:#ededf1;--pill:#f3f3f5;--nav:#fff;--shadow:0 26px 53px #28222918,0 6px 18px #2424240a;--outline:#eeeef2;--cover:#eee;--gradient:radial-gradient(ellipse at 99% -10%,#ffe8de 0%,transparent 37%),radial-gradient(ellipse at -10% 107%,#ffebe1 0%,transparent 37%),#fcf9f8;--phone-border:#f2f2f3;color-scheme:light}
+[data-theme="dark"]{--canvas:#0f111b;--phone:#1a1b22;--ink:#faf9fb;--secondary:#a0a0aa;--divider:#32323a;--pill:#2b2b32;--nav:#26272f;--shadow:0 26px 65px #0009,0 3px 13px #0005;--outline:#383841;--cover:#2a2a31;--gradient:radial-gradient(ellipse at 102% -7%,#4c241e 0%,transparent 38%),radial-gradient(ellipse at -8% 112%,#5b2e1b 0%,transparent 35%),#10121d;--phone-border:#424149;color-scheme:dark}
+*{box-sizing:border-box}html{min-height:100%;background:var(--canvas)}body{margin:0;min-height:100vh;color:var(--ink);background:var(--gradient);transition:background .2s,color .2s}button,input{font:inherit}button{cursor:pointer;color:inherit}button:focus-visible,input:focus-visible{outline:2px solid var(--orange);outline-offset:2px}button:disabled{cursor:default;opacity:.6}.topbar{max-width:1440px;margin:auto;padding:25px 34px 26px;display:flex;align-items:center;justify-content:space-between;gap:20px}.identity{display:flex;align-items:center;gap:16px}.identity-icon{width:62px;height:62px;display:grid;place-items:center;color:#fff;border-radius:19px;background:linear-gradient(145deg,#38383e,#14151c);border:1px solid #ffffff30;box-shadow:0 6px 20px #0003}.identity-icon svg{width:41px;height:38px}.wordmark{font-size:34px;font-weight:850;letter-spacing:-1.4px;line-height:1.2}.wordmark b,.brand-small b{color:var(--orange)}.tagline{font-size:9px;letter-spacing:3.1px;margin-top:4px;color:var(--secondary);font-weight:700}.theme-controls{display:flex;align-items:center;gap:14px}.preview-label{font-size:10px;letter-spacing:1.5px;color:var(--secondary);font-weight:700}.theme-switch{border:1px solid var(--outline);background:var(--phone);border-radius:40px;padding:10px 14px;display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700}.theme-switch svg{width:16px;height:16px}.stage{max-width:1440px;margin:auto;padding:22px 30px 65px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px;align-items:start}.phone{height:675px;position:relative;overflow:hidden;background:var(--phone);border:1px solid var(--phone-border);border-radius:40px;box-shadow:var(--shadow);min-width:0}.phone.extra-phone{display:none}.mobile-slot{height:100%;overflow:hidden}.screen{height:100%;display:flex;flex-direction:column;position:relative;min-width:0}.scroll-area{flex:1;overflow-y:auto;overflow-x:hidden;padding:27px 22px 0;scrollbar-width:none}.scroll-area::-webkit-scrollbar{display:none}.screen-header{display:flex;justify-content:space-between;align-items:center;height:28px;gap:8px;margin-bottom:16px}.brand-small{font-size:13px;letter-spacing:-.5px;font-weight:850}.icon-only{padding:5px;border:0;background:none;display:inline-grid;place-items:center;color:var(--ink);border-radius:8px;flex-shrink:0}.icon-only svg{width:19px;height:19px;stroke-width:1.8}.icon-only.muted{color:var(--secondary)}.title-large{font-size:32px;line-height:1.1;letter-spacing:-1.15px;font-weight:820;margin:3px 0 19px}.title-medium{font-size:24px;font-weight:850;letter-spacing:-.8px;margin:8px 0 12px}.tab-line{display:flex;gap:23px;overflow-x:auto;white-space:nowrap;scrollbar-width:none;margin:0 -2px 21px;padding:0 2px 3px}.tab-line button{border:0;background:none;padding:0 0 12px;font-size:12px;font-weight:630;color:var(--secondary);position:relative}.tab-line button.selected{color:var(--ink)}.tab-line button.selected:after{content:"";position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--orange);border-radius:6px}.section-head{display:flex;justify-content:space-between;align-items:center;margin:10px 0 13px}.section-head h2{font-size:19px;letter-spacing:-.5px;margin:0;font-weight:800}.link-button{font-size:11px;background:none;border:0;color:var(--secondary);padding:5px 0}.tile-rail{display:flex;gap:11px;overflow-x:auto;margin-right:-22px;padding:0 22px 2px 0;scrollbar-width:none}.feature-card{position:relative;flex:0 0 167px;height:184px;overflow:hidden;border:0;border-radius:16px;text-align:left;padding:0;background:var(--cover);color:white}.feature-card img{width:100%;height:100%;object-fit:cover}.feature-card:after{content:"";position:absolute;inset:35% 0 0;background:linear-gradient(0deg,#000b,transparent)}.feature-info{position:absolute;z-index:1;bottom:11px;left:12px;right:9px}.feature-name{font-size:14px;font-weight:730;letter-spacing:-.2px;display:block;margin-bottom:10px}.feature-footer{display:flex;gap:8px;align-items:center}.small-square-play{width:31px;height:31px;border:0;border-radius:9px;background:white;color:#171921;display:grid;place-items:center}.small-square-play svg{height:15px;width:15px;fill:currentColor}.feature-stat{font-size:10px;color:#fff;white-space:nowrap}.release-rail{display:flex;gap:11px;overflow-x:auto;margin-right:-22px;padding-right:22px;scrollbar-width:none}.release{width:85px;flex:0 0 85px;border:0;background:none;padding:0;text-align:left}.release img{height:85px;width:85px;object-fit:cover;border-radius:11px;background:var(--cover);display:block;margin-bottom:7px}.release strong{display:block;font-size:11px;font-weight:760;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.release small{font-size:10px;color:var(--secondary);display:block;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.song-row{width:100%;background:none;border:0;display:flex;text-align:left;align-items:center;gap:12px;padding:6px 0;min-height:55px}.song-row>img{width:45px;height:45px;object-fit:cover;border-radius:9px;background:var(--cover);flex-shrink:0}.song-row .song-info{min-width:0;flex:1}.song-row strong,.song-row small{display:block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.song-row strong{font-weight:750;font-size:12.5px}.song-row small{font-size:11px;color:var(--secondary);margin-top:4px}.song-duration{font-size:11px;color:var(--secondary)}.mini-dots{padding:6px;border:0;background:transparent;font-size:20px;line-height:12px;letter-spacing:1px;color:var(--ink)}.bottom-nav{height:62px;background:var(--nav);box-shadow:0 -10px 35px #00000005;border-top:1px solid var(--outline);display:flex;align-items:center;justify-content:space-around;padding:4px 14px 12px;border-radius:25px 25px 0 0;flex-shrink:0}.bottom-nav button{background:none;border:0;color:var(--secondary);padding:8px;display:grid;place-items:center}.bottom-nav svg{width:21px;height:21px;stroke-width:1.8}.bottom-nav .active{color:var(--orange)}.player-screen .scroll-area{padding:28px 24px 0;display:flex;flex-direction:column}.center-head{justify-content:space-between;margin-bottom:42px}.center-head strong{font-size:13px;font-weight:750}.cover-large{width:100%;aspect-ratio:1;object-fit:cover;border-radius:27px;display:block;margin:0 auto;max-width:270px}.player-song{text-align:center;margin:29px 0 0}.player-song h1{font-size:27px;letter-spacing:-.9px;line-height:1.2;margin:0}.player-song p{font-size:16px;color:var(--secondary);margin:9px 0 0}.wave-timeline{display:flex;align-items:center;gap:7px;margin-top:auto;padding-top:25px}.wave-timeline .stamp{font-size:10px;font-weight:700;white-space:nowrap}.wave-lines{display:flex;height:52px;gap:2px;align-items:center;flex:1;justify-content:center;overflow:hidden}.wave-lines span{display:block;flex:1;max-width:3px;border-radius:3px;background:#d7d8dd}.wave-lines span.elapsed{background:var(--orange)}[data-theme="dark"] .wave-lines span{background:#464650}.player-controls{display:flex;align-items:center;justify-content:center;gap:38px;margin:33px 0 32px}.player-controls button{border:0;background:transparent;padding:5px;display:grid;place-items:center}.player-controls svg{width:24px;height:24px;fill:var(--ink);stroke-width:1.5}.player-controls .big-play{width:57px;height:57px;border-radius:50%;background:var(--orange);color:white;box-shadow:0 7px 18px #ff76212c}.player-controls .big-play svg{width:26px;height:26px;fill:white;stroke:white}.player-actions{display:flex;justify-content:space-between;margin:0 7px 22px}.player-actions button{background:none;border:0;color:var(--secondary);padding:4px}.player-actions svg{height:21px;width:21px}.player-actions .active{color:var(--orange)}.search-input{display:flex;align-items:center;gap:9px;border-radius:30px;background:var(--pill);padding:0 12px;height:37px;margin-bottom:16px}.search-input svg{width:16px;height:16px;flex-shrink:0;color:var(--secondary)}.search-input input{border:0;outline:0;flex:1;min-width:0;background:transparent;font-size:12px;color:var(--ink)}.category-chips{display:flex;gap:13px;overflow-x:auto;white-space:nowrap;margin-bottom:19px;scrollbar-width:none}.category-chips button{border:0;background:none;padding:7px 0;color:var(--secondary);font-size:11px}.category-chips .selected{color:white;background:var(--orange);padding:7px 12px;border-radius:30px}.top-result{display:flex;align-items:center;gap:13px;margin-bottom:19px;border:0;background:none;text-align:left;width:100%;padding:0}.top-result img{width:54px;height:54px;object-fit:cover;border-radius:50%}.top-result div{flex:1}.top-result strong{font-size:13px}.top-result small{display:block;color:var(--secondary);font-size:10px;margin-top:5px}.top-result svg{width:16px;height:16px}.result-section{margin:7px 0 20px}.result-section .section-head{margin-bottom:11px}.result-section .song-row{padding:3px 0}.playlist-art{display:block;width:200px;height:178px;object-fit:cover;border-radius:23px;margin:10px auto 20px}.playlist-title{font-size:26px;margin:0 0 6px;line-height:1.12;font-weight:840;letter-spacing:-.8px}.playlist-byline{font-size:11px;color:var(--secondary);margin:0 0 5px}.playlist-description{font-size:11px;line-height:1.7;color:var(--secondary);margin:13px 0 17px}.playlist-buttons{display:flex;align-items:center;gap:7px;margin-bottom:14px}.playlist-buttons button{display:flex;align-items:center;justify-content:center;gap:7px;border-radius:50px;border:1px solid var(--outline);background:transparent;padding:10px 13px;font-size:11px;font-weight:730}.playlist-buttons .primary{background:var(--orange);color:#fff;border-color:var(--orange);min-width:98px}.playlist-buttons .round-add{padding:9px;width:36px;height:36px;border-radius:50%;font-size:20px;font-weight:400}.playlist-buttons svg{height:14px;width:14px}.library-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:20px 0}.library-actions button{border:1px solid var(--outline);background:var(--pill);border-radius:13px;padding:16px 8px;display:flex;flex-direction:column;align-items:center;gap:9px;font-size:12px;font-weight:720}.library-actions svg{width:24px;height:24px;color:var(--orange)}.library-empty{border:1px dashed var(--outline);border-radius:13px;padding:18px;color:var(--secondary);font-size:12px;line-height:1.6}.search-empty{padding:18px 0;color:var(--secondary);font-size:12px;line-height:1.5}.switch-banner{background:var(--pill);border-radius:14px;padding:11px;margin-bottom:16px;font-size:11px;color:var(--secondary)}.mobile-toolbar{display:none}.toast{pointer-events:none;position:fixed;bottom:25px;left:50%;transform:translate(-50%,18px);padding:11px 17px;background:#272831;color:white;border-radius:30px;font-size:12px;box-shadow:0 8px 30px #0003;opacity:0;transition:.2s;z-index:100;max-width:90%;text-align:center}.toast.visible{opacity:1;transform:translate(-50%,0)}
+@media(min-width:1440px){.phone{height:735px}.stage{gap:24px;padding-left:34px;padding-right:34px}.scroll-area{padding-left:25px;padding-right:25px}.feature-card{flex-basis:182px;height:201px}.release{width:94px;flex-basis:94px}.release img{width:94px;height:94px}.playlist-art{width:215px;height:190px}.player-screen .scroll-area{padding-left:26px;padding-right:26px}}
+@media(max-width:1030px) and (min-width:621px){.stage{grid-template-columns:repeat(2,minmax(0,355px));justify-content:center}.phone{height:705px}}
+@media(max-width:620px){html,body{height:100%;overflow:hidden}.topbar{display:none}.stage{display:block;height:100dvh;padding:0;margin:0}.phone,.phone.extra-phone{display:none;position:absolute;inset:0;width:100%;height:100dvh;border:0;border-radius:0;box-shadow:none}.phone.mobile-active{display:block}.scroll-area{padding:calc(25px + env(safe-area-inset-top)) 25px 0}.player-screen .scroll-area{padding-top:calc(26px + env(safe-area-inset-top))}.cover-large{max-width:min(80vw,370px)}.center-head{margin-bottom:min(7vh,48px)}.player-controls{margin:28px 0}.bottom-nav{padding-bottom:calc(10px + env(safe-area-inset-bottom));height:calc(63px + env(safe-area-inset-bottom))}.mobile-toolbar{display:flex;position:fixed;right:12px;top:9px;z-index:50;background:var(--pill);padding:5px;border-radius:30px;opacity:.05;transition:opacity .2s}.mobile-toolbar:focus-within,.mobile-toolbar:hover{opacity:1}.mobile-toolbar button{background:transparent;border:0;padding:7px}.mobile-toolbar svg{width:16px;height:16px}}
+@media(max-width:360px){.scroll-area{padding-left:20px;padding-right:20px}.player-screen .scroll-area{padding-left:20px;padding-right:20px}.title-large{font-size:29px}.tab-line{gap:15px}.player-controls{gap:26px}.feature-card{flex-basis:145px;height:169px}}
+
+
+/* v1.0.5: fullscreen-width floating top mini dock, native-safe vertical offset */
+:root{--aura-mini-top: max(30px, env(safe-area-inset-top, 0px));}
+.screen.with-mini .scroll-area{padding-top:152px}
+.mini-player{
+  left:0;right:0;width:100%;top:var(--aura-mini-top);
+  height:106px;border-radius:28px;
+  background:var(--nav);border:1px solid var(--outline);
+  box-shadow:0 10px 28px #00000020;
+}
+.mini-main{height:82px;padding:11px 22px 0 23px;gap:12px}
+.mini-text strong{font-size:16px}.mini-text small{font-size:13px}
+.mini-control{width:46px;height:46px;font-size:23px}
+.mini-grab{height:22px}.mini-grab span{width:46px;height:4px}
+@media(max-width:620px){
+  .screen.with-mini .scroll-area{padding-top:calc(157px + env(safe-area-inset-top, 0px))}
+  .mini-player{top:max(32px, env(safe-area-inset-top, 0px));left:0;right:0}
+}
+@media(min-width:621px){.mini-player{top:12px}}
+
+/* v1.0.8: playback hotfix + LP mini player */
+.mini-main{padding:12px 20px 0 18px;gap:14px}
+.mini-player{height:112px;border-radius:28px;background:var(--nav)}
+.mini-vinyl{position:relative;width:58px;height:58px;flex-shrink:0;border:0;background:none;padding:0;display:grid;place-items:center}
+.vinyl-disc{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 50% 50%, #1f222d 0 18%, #111318 19% 40%, #2c303c 41% 43%, #111318 44% 62%, #242836 63% 66%, #0f1015 67% 100%);box-shadow:0 6px 16px #0000002a}
+[data-theme="light"] .vinyl-disc{background:radial-gradient(circle at 50% 50%, #f0f0f2 0 18%, #dadce2 19% 40%, #babec8 41% 43%, #e9ebef 44% 62%, #c4c8d1 63% 66%, #d9dbe1 67% 100%)}
+.vinyl-label{position:relative;z-index:1;width:26px;height:26px;border-radius:50%;overflow:hidden;background:var(--orange);display:grid;place-items:center;color:#fff;font-size:12px;font-weight:800;box-shadow:0 0 0 2px #ffffff12}
+.vinyl-label img{width:100%;height:100%;object-fit:cover;display:block}
+.mini-vinyl.spinning{animation:vinylSpin 5.2s linear infinite}
+@keyframes vinylSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.mini-text strong{font-size:15px;font-weight:760;line-height:1.1}.mini-text small{font-size:12px;line-height:1.1}
+.mini-marquee{display:flex;align-items:center}
+.mini-control{width:42px;height:42px;font-size:22px}
+@media(max-width:620px){.mini-player{height:116px}.mini-vinyl{width:60px;height:60px}.mini-main{height:88px;padding:14px 18px 0 18px}}
+
+/* v1.0.9: artwork is a real Play target, same flat visual appearance */
+.song-art-play{display:grid;place-items:center;flex-shrink:0;width:57px;height:57px;border:0;background:none;padding:0;border-radius:9px;overflow:hidden}
+.song-art-play img,.song-art-play .placeholder-cover{width:100%;height:100%;object-fit:cover;border-radius:9px}
+.song-art-play:active{transform:scale(.96)}
+@media(min-width:621px){.song-art-play{width:57px;height:57px}}
+
+/* AURA AMP v1.1.0 Flat UIX: exact dark family, artist catalog and lyrics */
+[data-theme="dark"]{--canvas:#0c101b;--phone:#1b1d24;--nav:#25272e;--ink:#f6f4f4;--secondary:#a9a7b2;--pill:#2b2e36;--divider:#323640;--outline:#3b4049;--orange:#FF7A00;--gradient:radial-gradient(ellipse at 72% -12%,#1f304e 0%,transparent 46%),radial-gradient(ellipse at 100% -15%,#542d1d 0%,transparent 25%),#0e121f}
+[data-theme="dark"] body{background:var(--gradient)}
+.player-controls{display:grid;grid-template-columns:64px 66px 64px;gap:29px;justify-content:center;align-items:center;margin:28px 0 23px;width:100%}
+.player-controls button{display:grid;place-items:center;width:54px;height:54px;padding:0;margin:auto}
+.player-controls .big-play{width:62px;height:62px;border-radius:50%;box-shadow:none;color:#fff}
+.player-controls .big-play svg{width:29px;height:29px;fill:none;stroke:none;color:white;display:block}
+.player-controls button:not(.big-play) svg{width:29px;height:29px;color:var(--ink);fill:none;stroke:none}
+.player-actions{align-items:center;margin:0 5px 15px}
+.player-actions button{display:flex;align-items:center;flex-direction:column;gap:2px;justify-content:center;min-width:31px;min-height:36px}
+.microphone-icon{font-size:27px;line-height:23px}.karaoke-label{font-size:9px}
+.artist-under-title,.artist-under-album{color:var(--secondary);font-size:18px;display:block;text-align:center;margin:6px auto 0;background:none;border:none;padding:3px}
+.artist-under-album{text-align:left;margin:3px 0 8px;font-size:14px}
+.catalog-result{display:flex;align-items:center;text-align:left;gap:12px;padding:6px 0;background:none;border:0;width:100%;min-height:68px}
+.catalog-result img,.catalog-result .placeholder-cover{height:54px;width:54px;object-fit:cover;border-radius:11px;flex-shrink:0}
+.catalog-result span:nth-child(2){flex:1;min-width:0}.catalog-result strong,.catalog-result small{display:block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.catalog-result strong{font-size:14px}.catalog-result small{font-size:12px;color:var(--secondary);margin-top:5px}.catalog-chevron{font-size:22px;color:var(--secondary)}
+.artist-hero{height:225px;border-radius:22px;background:var(--pill);overflow:hidden;position:relative;margin-bottom:14px}
+.artist-hero img{width:100%;height:100%;object-fit:cover}
+.artist-hero:after{content:"";position:absolute;inset:34% 0 0;background:linear-gradient(transparent,#000d)}
+.artist-hero-caption{position:absolute;z-index:1;left:17px;right:13px;bottom:15px;color:white}
+.artist-hero-caption h1{font-size:32px;line-height:1.05;margin:0 0 5px}.artist-hero-caption small{font-size:12px;color:#e2e1e5}
+.artist-buttons{display:flex;gap:12px;margin:12px 0 25px}.artist-buttons button{border:1px solid var(--outline);border-radius:35px;padding:11px 24px;background:transparent;font-size:14px;font-weight:650}.artist-buttons .primary{background:var(--orange);border-color:var(--orange);color:white}
+.artist-bio{font-size:13px;line-height:1.7;color:var(--secondary);padding-bottom:32px}
+.karaoke-switch{display:flex;align-items:center;gap:8px;margin:0 0 16px}
+.karaoke-switch button{flex:1;min-height:37px;background:var(--pill);border:1px solid var(--outline);border-radius:20px;color:var(--ink);font-size:12px}
+.karaoke-switch button.active{background:var(--orange);color:white;border-color:var(--orange)}
+.karaoke-lines{flex:1;min-height:190px;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none;display:flex;flex-direction:column;gap:17px;padding:20px 8px 32px;text-align:center;mask-image:linear-gradient(transparent,#000 10%,#000 85%,transparent)}
+.karaoke-lines::-webkit-scrollbar{display:none}
+.lyric-line{font-size:21px;line-height:1.3;color:var(--secondary);opacity:.75;transition:color .2s,opacity .2s,transform .2s}
+.lyric-line.active{color:var(--orange);font-weight:780;opacity:1;transform:scale(1.045)}
+.karaoke-message{margin:auto;color:var(--secondary);font-size:14px}
+.player-screen .scroll-area{min-height:0}.player-screen .wave-timeline{flex-shrink:0}
+@media(max-width:620px){.player-controls{grid-template-columns:64px 68px 64px;gap:clamp(20px,8vw,45px)}.artist-hero{height:265px}.lyric-line{font-size:clamp(21px,5.5vw,27px)}}
+
+/* Home-library integrations respect the approved Flat UIX language */
+.server-status{margin:9px 0 13px;color:var(--secondary);font-size:12px;line-height:1.55}
+.server-rows{margin:4px 0 22px}.server-rows .song-row{border-bottom:1px solid var(--outline)}
+.server-tag{font-size:10px;color:var(--orange);margin-top:3px}
+
+/* v1.2.1 — reference-aligned transport and cast button */
+.player-controls{position:relative;display:grid!important;grid-template-columns:54px 70px 54px;column-gap:clamp(24px,7vw,43px);align-items:center;justify-content:center;width:100%;margin:29px auto 35px;padding-right:0}
+.player-controls>button{height:54px;width:54px;display:grid;place-items:center;padding:0;margin:0;border-radius:50%;background:transparent;color:var(--ink);box-shadow:none}
+.player-controls>button svg{width:27px;height:27px;fill:currentColor;stroke:currentColor}
+.player-controls>.big-play{height:62px;width:62px;justify-self:center;align-self:center;background:var(--aura-orange-gradient)!important;border-radius:50%;box-shadow:inset 0 1px 1px #ffffff95,0 3px 6px #c94f0036,0 10px 20px #ff76002b!important;color:white!important}
+.player-controls>.big-play svg{height:30px;width:30px;fill:#fff;stroke:#fff}
+.player-controls>.cast-player-button{position:absolute;right:0;top:50%;transform:translateY(-50%);height:40px;width:40px;color:var(--secondary);background:none;border:0;box-shadow:none}
+.player-controls>.cast-player-button svg{height:23px;width:23px;fill:none;stroke:currentColor}
+[data-theme=dark] .player-controls>.big-play{background:var(--aura-orange-gradient)!important;box-shadow:inset 0 1px 1px #ffd28c9c,0 6px 18px #e45d0066!important}
+@media(max-width:360px){.player-controls{column-gap:19px}.player-controls>.cast-player-button{right:-5px}}
+
+[data-theme="light"] .player-controls>button:not(.big-play):not(.cast-player-button){color:var(--orange)}
+[data-theme="dark"] .player-controls>button:not(.big-play):not(.cast-player-button){color:var(--ink)}
+
+/* v1.2.5: adjacent AirPlay handoff retains the approved Flat UIX transport design. */
+.player-controls .airplay-player-button{display:grid;place-items:center;background:transparent;border:0;color:var(--secondary);padding:3px;width:29px;height:34px;flex:0 0 29px}
+.player-controls .airplay-player-button svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8}
+.player-controls .airplay-player-button:active{color:var(--orange)}
+@media(max-width:380px){.player-controls{gap:12px!important}}
+
+/* Aura Amp 1.3 Flat UIX additions */
+.mini-player{top:0!important;left:0;right:0;border-radius:0 0 27px 27px!important;}
+.mini-main{padding-top:max(14px,env(safe-area-inset-top))!important;}
+.screen.with-mini .scroll-area{padding-top:calc(142px + env(safe-area-inset-top))!important}
+.settings-row span:last-child{font-size:20px;font-weight:800}
+.bottom-nav .heart-discovery{color:#ff751b!important;transform:scale(1.25)}
+.bottom-nav .heart-discovery svg{fill:#ff751b;stroke:#ff751b}
+.aura-list-cover{width:50px;height:50px;border-radius:12px;display:grid;place-items:center;flex-shrink:0;color:white;overflow:hidden;background-position:center;background-size:cover;padding:4px;text-align:center}
+.aura-list-cover span{font-size:10px;line-height:1.1;font-weight:850;letter-spacing:-.3px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;text-shadow:0 1px 8px #0008}
+.aura-list-cover.big{width:min(245px,80%);height:215px;border-radius:25px;margin:8px auto 15px}
+.aura-list-cover.big span{font-size:29px;letter-spacing:-1px;padding:8px}
+.new-cover-preview{width:100%;aspect-ratio:1.3;max-height:250px;border-radius:22px;display:grid;place-items:center;color:white;background-size:cover;background-position:center;margin:18px 0 24px}
+.new-cover-preview span{font-size:clamp(26px,8vw,44px);font-weight:900;text-align:center;padding:18px;line-height:1.05;text-shadow:0 2px 15px #0008;letter-spacing:-1px}
+.settings-label textarea{background:var(--pill);border:0;border-radius:14px;padding:12px;color:var(--ink);font:inherit;font-size:14px;resize:vertical}
+.cover-label{font-size:13px;font-weight:750}.cover-picker{display:flex;gap:9px;overflow-x:auto;margin-bottom:15px}.cover-choice{width:56px;height:56px;border-radius:13px;border:2px solid transparent;flex-shrink:0;color:white;font-size:23px}.cover-choice.chosen{border-color:var(--orange)}
+.playlist-utility{display:flex;gap:12px;margin:10px 0 16px}.playlist-utility button{background:var(--pill);border:none;border-radius:14px;padding:12px;color:var(--ink);font-size:12px;flex:1}
+.swipe-card{background:var(--pill);border-radius:26px;padding:16px;text-align:center;touch-action:pan-y;margin-top:24px}.swipe-card>img{width:100%;max-height:330px;object-fit:cover;aspect-ratio:1;border-radius:19px}.swipe-card h2{font-size:25px;margin:17px 0 5px}.swipe-card p{color:var(--secondary);margin:0 0 24px}.swipe-actions{display:flex;gap:12px}.swipe-actions button{flex:1;border:none;background:var(--phone);border-radius:40px;padding:14px;color:var(--ink);font-weight:750}.swipe-actions button:last-child{background:var(--aura-orange-gradient);color:white}
+.karaoke-under-title{display:block;margin:13px auto 0;padding:8px 17px;border:1px solid var(--outline);background:var(--pill);color:var(--orange);border-radius:24px;font-size:12px;font-weight:750}
+</style><style>
+/* AURA AMP v1.0.3 — fixed reference design tokens. 4-screen Flat UIX. */
+.phone[data-screen]:not([data-screen="discover"]){display:none!important}
+:root{--orange:#FF7A00;--canvas:#fbf9f8;--phone:#fff;--ink:#11151f;--secondary:#8d909a;--pill:#f3f3f5;--nav:#fff;--outline:#efeff2;--gradient:#fbf8f7}
+[data-theme="dark"]{--orange:#FF7A00;--phone:#191c25;--ink:#f7f7fa;--secondary:#a0a2ad;--pill:#2a2c36;--nav:#22252f;--outline:#393b45;--gradient:#11131c}
+body{background:var(--gradient)}
+.topbar{max-width:500px;padding:15px 24px 10px}.wordmark{font-size:24px}.identity-icon{width:47px;height:47px;border-radius:15px}.identity-icon svg{width:32px}.tagline{font-size:7px;letter-spacing:2px}.preview-label{font-size:9px}
+.stage{display:flex;justify-content:center;max-width:none;padding:12px 0 30px}.phone{width:min(380px,100%);height:790px;flex:none;border-radius:42px}.screen{height:100%}.scroll-area{padding:28px 25px 25px;min-height:0}.screen-header{margin-bottom:16px}.brand-small{font-size:14px;font-weight:850}.brand-small b{color:var(--orange)}
+.icon-only{border:0;background:transparent;padding:6px}.icon-only svg,.bottom-nav svg,.player-actions svg,.playlist-buttons svg,.search-input svg,.mini-dots svg{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;width:20px;height:20px}.mini-dots svg{fill:currentColor;stroke:none}
+.title-large{font-size:34px;letter-spacing:-1.35px;margin-top:5px;margin-bottom:22px;line-height:1.1}
+.tab-line{gap:25px;margin-bottom:20px}.tab-line button{font-size:12px;font-weight:660;padding-bottom:11px}.tab-line button.selected:after{height:3px}
+.section-head{margin:10px 0 14px}.section-head h2{font-size:20px;letter-spacing:-.65px}.link-button{font-size:11px}
+.tile-rail{gap:12px;margin-bottom:24px}.feature-card{flex-basis:177px;height:204px;border-radius:17px}.feature-name{font-size:14px}.feature-footer{gap:9px}.feature-stat{overflow:hidden;text-overflow:ellipsis;font-size:10px}.small-square-play{width:30px;height:30px;flex:none;font-size:12px}
+.release-rail{margin-bottom:22px;gap:12px}.release{width:89px;flex-basis:89px}.release img,.release .placeholder-cover{width:89px;height:89px;border-radius:12px}.release strong{font-size:11px}.release small{font-size:10px}
+.song-row{min-height:58px;gap:10px}.song-row>img,.song-row>.placeholder-cover{height:47px;width:47px;border-radius:10px}.song-row strong{font-size:12px}.song-row small{font-size:10.5px}.mini-dots{display:grid;place-items:center;width:28px;height:28px}.song-info{border:0;background:none;text-align:left;padding:0;color:var(--ink)}
+.bottom-nav{height:70px;border:0;border-top:1px solid var(--outline);border-radius:33px 33px 0 0;padding:7px 13px 13px;background:var(--nav);flex-shrink:0}.bottom-nav button{min-width:45px;min-height:45px}.bottom-nav svg{width:22px;height:22px}.bottom-nav .active svg{stroke-width:2.6}
+.player-screen .scroll-area{padding:29px 25px 24px;display:flex;flex-direction:column;overflow-y:auto}.center-head{margin-bottom:44px}.center-head strong{font-size:13px}.player-art{margin:0 auto;width:100%;display:flex;justify-content:center}.cover-large,.missing-cover{display:block;width:100%;max-width:290px;aspect-ratio:1;height:auto;object-fit:cover;border-radius:25px;margin:0 auto;background:var(--pill)}.missing-cover{display:grid;place-items:center;color:var(--secondary);font-size:50px}.player-song{margin:30px 0 0;text-align:center}.player-song h1{font-size:27px;font-weight:800}.player-song p{font-size:17px;margin:7px 0 0}
+.wave-timeline{display:flex;align-items:center;gap:8px;margin-top:auto;min-height:105px;padding-top:30px}.wave-seek{position:relative;flex:1;height:59px;min-width:0;display:flex;align-items:center}.wave-lines{display:flex;align-items:center;gap:2px;justify-content:space-between;flex:1;height:100%;pointer-events:none}.wave-lines span{flex:1;max-width:4px;min-width:2px;background:#d9dadd}.wave-lines span.elapsed{background:var(--orange)}[data-theme="dark"] .wave-lines span{background:#414550}[data-theme="dark"] .wave-lines span.elapsed{background:var(--orange)}.wave-seek input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}.wave-timeline .stamp{font-size:11px}
+.player-controls{margin:30px 0 40px;gap:48px;flex-shrink:0}.player-controls button{font-size:22px}.player-controls .big-play{width:60px;height:60px;font-size:27px;font-weight:700;box-shadow:none}.player-actions{margin:0 9px 4px;flex-shrink:0}.player-actions button{padding:8px}.player-actions svg{width:21px;height:21px}
+.search-input{height:42px;margin:0 0 17px;padding:0 14px;border-radius:29px}.search-input input{font-size:12px}.search-input>span{display:grid;place-items:center}.category-chips{margin-bottom:16px;gap:14px}.category-chips button{font-size:11px}.category-chips button.selected{border-radius:22px}
+.result-section{margin:13px 0 22px}.result-section .section-head{margin-bottom:12px}.top-result{min-height:68px}.top-result img{width:59px;height:59px;border-radius:50%;object-fit:cover}.top-result strong{font-size:13px}.top-result small{font-size:10px}.result-section .song-row{min-height:59px}
+.playlist-header{margin-bottom:10px}.playlist-art{width:min(215px,75%);aspect-ratio:1;height:auto;border-radius:24px;margin:3px auto 18px;object-fit:cover;display:block}.playlist-title{font-size:28px;margin:0 0 5px}.playlist-byline{font-size:11px;line-height:1.4;margin-bottom:5px}.playlist-description{font-size:11.5px;line-height:1.55;margin:13px 0 19px;min-height:33px}.playlist-buttons{gap:9px;margin-bottom:15px}.playlist-buttons button{font-size:12px;min-height:39px;padding:8px 14px}.playlist-buttons .primary{min-width:104px}.playlist-buttons .round-add{width:39px;height:39px;min-width:39px}
+.playlist-mini-icon{display:grid;place-items:center;width:47px;height:47px;border-radius:10px;background:var(--pill);color:var(--orange);flex-shrink:0}
+.placeholder-cover{background:var(--pill);color:var(--secondary);display:grid;place-items:center;border-radius:12px;font-size:25px}.missing-art{background:var(--pill)}.missing-art::after{content:'♫';display:grid;place-items:center;position:absolute;inset:0;color:var(--secondary);font-size:25px;pointer-events:none}.song-row.missing-art:after{display:none}
+.settings-group{border-bottom:1px solid var(--outline);margin-bottom:18px;padding-bottom:16px}.settings-group h2{font-size:15px;margin:7px 0 13px}.settings-label{display:flex;flex-direction:column;gap:8px;color:var(--secondary);font-size:11px;margin-bottom:10px}.settings-label input,.settings-label select{width:100%;background:var(--pill);color:var(--ink);border:0;border-radius:12px;padding:13px;font-size:12px}.settings-row{width:100%;display:flex;align-items:center;justify-content:space-between;gap:14px;min-height:48px;border:0;border-bottom:1px solid var(--outline);background:transparent;text-align:left;padding:10px 0;color:var(--ink);font-size:12px}.settings-row select{background:var(--pill);border:0;border-radius:9px;padding:9px;color:var(--ink);max-width:150px}.settings-help,.small-status{font-size:11px;line-height:1.5;color:var(--secondary)}.settings-primary{display:block;width:100%;border:0;border-radius:25px;color:#fff;background:var(--orange);font-size:12px;font-weight:700;padding:13px;margin:12px 0}.settings-row input[type="checkbox"]{accent-color:var(--orange)}.library-actions{margin:16px 0 25px}.library-actions button{background:var(--pill);border:0;border-radius:15px}.library-empty,.switch-banner{border:0;background:var(--pill);border-radius:13px;color:var(--secondary);font-size:11px;line-height:1.45;padding:12px 13px}.switch-banner{margin-bottom:14px}.search-empty{padding:18px 1px;color:var(--secondary);font-size:12px}.view-spacer{height:20px}
+.mobile-toolbar{display:none!important}.toast{z-index:110}
+@media(max-width:620px){html,body{height:100%;overflow:hidden}.topbar{display:none}.stage{display:block;height:100dvh;padding:0;margin:0}.phone,.phone.extra-phone{display:none;position:absolute;inset:0;width:100%;height:100dvh;border:0;border-radius:0;box-shadow:none}.phone.mobile-active{display:block}.scroll-area{padding:calc(25px + env(safe-area-inset-top)) 25px 20px}.player-screen .scroll-area{padding-top:calc(25px + env(safe-area-inset-top))}.cover-large,.missing-cover{max-width:min(76vw,345px)}.center-head{margin-bottom:min(8vh,55px)}.player-controls{margin:25px 0 38px}.bottom-nav{padding-bottom:calc(9px + env(safe-area-inset-bottom));height:calc(67px + env(safe-area-inset-bottom))}.playlist-art{max-width:230px}.feature-card{flex-basis:47%;height:205px}.release{width:29%;flex-basis:29%}.release img,.release .placeholder-cover{width:100%;aspect-ratio:1;height:auto}.scroll-area{scrollbar-width:none}}
+@media(max-width:365px){.scroll-area{padding-left:20px;padding-right:20px}.tab-line{gap:16px}.feature-card{height:186px}.player-controls{gap:30px}.title-large{font-size:30px}.player-screen .scroll-area{padding-left:20px;padding-right:20px}}
+
+/* v1.0.4 Flat UIX: approved reference fidelity, enlarged content + animated mini player */
+[data-theme="dark"]{--canvas:#12141e;--phone:#191c25;--nav:#21242e;--pill:#292c36;--outline:#343844;--divider:#333641;--gradient:#12141e}
+[data-theme="dark"] body{background:#12141e}
+.brand-small{font-size:17px;letter-spacing:-.5px;font-weight:850}
+.title-large{font-size:41px;line-height:1.04;letter-spacing:-1.6px}
+.section-head h2{font-size:24px}.section-head{margin:15px 0 17px}
+.tab-line button{font-size:14px}.tab-line{gap:23px}
+.feature-card{flex-basis:205px;height:232px}.feature-name{font-size:16px}
+.release{width:106px;flex-basis:106px}.release img,.release .placeholder-cover{width:106px;height:106px}.release strong{font-size:13px}.release small{font-size:12px}
+.song-row{min-height:68px}.song-row>img,.song-row>.placeholder-cover{height:57px;width:57px}.song-row strong{font-size:14.5px}.song-row small{font-size:12px}
+.playlist-title{font-size:34px}.playlist-byline,.playlist-description{font-size:13px}.playlist-art{width:min(240px,76%)}
+.cover-large{max-width:315px}.player-song h1{font-size:33px}.player-song p{font-size:19px}
+.search-input{height:48px}.search-input input{font-size:14px}.category-chips button{font-size:13px}
+.discover-album-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 13px;padding-bottom:25px}
+.discover-album{border:0;padding:0;text-align:left;background:transparent;min-width:0}
+.discover-album img,.discover-album .placeholder-cover{display:block;width:100%;aspect-ratio:1;object-fit:cover;border-radius:17px;background:var(--pill)}
+.discover-album strong,.discover-album small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.discover-album strong{font-size:14px;margin-top:8px}.discover-album small{font-size:12px;color:var(--secondary);margin-top:3px}
+.artist-discover-row{width:100%;border:0;background:none;display:flex;align-items:center;gap:13px;text-align:left;padding:10px 0}
+.artist-discover-row img,.artist-discover-row .placeholder-cover{width:62px;height:62px;object-fit:cover;border-radius:50%;flex-shrink:0}
+.artist-discover-row span:nth-child(2){flex:1;min-width:0}.artist-discover-row strong,.artist-discover-row small{display:block;white-space:nowrap;text-overflow:ellipsis;overflow:hidden}.artist-discover-row strong{font-size:15px}.artist-discover-row small{font-size:12px;color:var(--secondary);margin-top:5px}.artist-chevron{font-size:23px;color:var(--secondary)}
+.screen.with-mini .scroll-area{padding-top:104px}
+.mini-player{position:absolute;z-index:11;left:13px;right:13px;top:8px;height:84px;border-radius:20px;border:1px solid var(--outline);background:var(--phone);box-shadow:0 10px 24px #00000018;overflow:hidden;animation:miniDrop .28s cubic-bezier(.16,1,.3,1) both;touch-action:pan-y}
+.mini-main{height:64px;display:flex;align-items:center;gap:10px;padding:5px 12px 0 16px}.mini-marquee{min-width:0;flex:1;cursor:pointer;overflow:hidden;white-space:nowrap}.mini-text{display:flex;flex-direction:column;gap:4px;min-width:max-content;max-width:none}.mini-text strong{font-size:14px}.mini-text small{font-size:12px;color:var(--secondary)}
+@keyframes miniScroll{0%,20%{transform:translateX(0)}75%,95%{transform:translateX(min(-45%, -75px))}100%{transform:translateX(0)}}
+.mini-marquee .mini-text{animation:miniScroll 13s linear 2s infinite alternate}
+.mini-control{background:transparent;border:0;display:grid;place-items:center;flex-shrink:0;width:38px;height:38px;font-size:20px}.mini-toggle{color:var(--orange)}
+.mini-grab{height:18px;display:grid;place-items:center;border:0;background:transparent;width:100%;padding:0;touch-action:pan-y}.mini-grab span{width:40px;height:4px;border-radius:9px;background:var(--secondary);opacity:.6}
+@keyframes miniDrop{from{transform:translateY(-120%);opacity:.2}to{transform:translateY(0);opacity:1}}
+@keyframes miniExpand{to{transform:translateY(112%);opacity:0}}
+.mini-expand{animation:miniExpand .21s ease-in both}.player-screen.slide-up{animation:slideToTop .22s ease-in both}@keyframes slideToTop{to{transform:translateY(-90%);opacity:.1}}
+.action-shade{position:absolute;inset:0;background:#0008;z-index:24;animation:shadeIn .18s ease-out}
+.action-sheet{position:absolute;z-index:25;left:8px;right:8px;bottom:7px;background:var(--phone);color:var(--ink);border:1px solid var(--outline);border-radius:24px;padding:14px 16px 23px;box-shadow:0 -15px 50px #0005;animation:sheetIn .22s ease-out}
+.action-sheet>button{width:100%;border:0;border-bottom:1px solid var(--outline);background:none;text-align:left;padding:16px 5px;font-size:15px;color:var(--ink)}.action-sheet>button:last-child{border:0}
+.action-head{display:flex;gap:12px;align-items:center;padding:3px 0 11px;border-bottom:1px solid var(--outline)}.action-head img,.action-head .placeholder-cover{height:52px;width:52px;object-fit:cover;border-radius:11px}.action-head>div{flex:1;min-width:0}.action-head strong,.action-head small{display:block;white-space:nowrap;text-overflow:ellipsis;overflow:hidden}.action-head small{color:var(--secondary);font-size:12px;margin-top:3px}.action-head>button{background:none;border:0;font-size:25px}
+@keyframes shadeIn{from{opacity:0}to{opacity:1}}@keyframes sheetIn{from{transform:translateY(35px);opacity:.5}to{transform:translateY(0);opacity:1}}
+.wave-lines span{transition:background .12s linear}.wave-seek input{touch-action:pan-x}
+@media(max-width:620px){.screen.with-mini .scroll-area{padding-top:116px}.scroll-area{padding-left:23px;padding-right:23px}.player-screen .scroll-area{padding-left:23px;padding-right:23px}.feature-card{flex-basis:57%;height:236px}.release{flex-basis:29%;width:29%}.release img,.release .placeholder-cover{width:100%;height:auto;aspect-ratio:1}.brand-small{font-size:19px}.title-large{font-size:43px}.bottom-nav{height:72px}}
+@media(max-width:350px){.title-large{font-size:36px}.feature-card{height:200px}.tab-line{gap:14px}.tab-line button{font-size:12px}}
+
+/* v1.0.5: fullscreen-width floating top mini dock, native-safe vertical offset */
+:root{--aura-mini-top: max(30px, env(safe-area-inset-top, 0px));}
+.screen.with-mini .scroll-area{padding-top:152px}
+.mini-player{
+  left:0;right:0;width:100%;top:var(--aura-mini-top);
+  height:106px;border-radius:28px;
+  background:var(--nav);border:1px solid var(--outline);
+  box-shadow:0 10px 28px #00000020;
+}
+.mini-main{height:82px;padding:11px 22px 0 23px;gap:12px}
+.mini-text strong{font-size:16px}.mini-text small{font-size:13px}
+.mini-control{width:46px;height:46px;font-size:23px}
+.mini-grab{height:22px}.mini-grab span{width:46px;height:4px}
+@media(max-width:620px){
+  .screen.with-mini .scroll-area{padding-top:calc(157px + env(safe-area-inset-top, 0px))}
+  .mini-player{top:max(32px, env(safe-area-inset-top, 0px));left:0;right:0}
+}
+@media(min-width:621px){.mini-player{top:12px}}
+
+/* v1.0.8: playback hotfix + LP mini player */
+.mini-main{padding:12px 20px 0 18px;gap:14px}
+.mini-player{height:112px;border-radius:28px;background:var(--nav)}
+.mini-vinyl{position:relative;width:58px;height:58px;flex-shrink:0;border:0;background:none;padding:0;display:grid;place-items:center}
+.vinyl-disc{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 50% 50%, #1f222d 0 18%, #111318 19% 40%, #2c303c 41% 43%, #111318 44% 62%, #242836 63% 66%, #0f1015 67% 100%);box-shadow:0 6px 16px #0000002a}
+[data-theme="light"] .vinyl-disc{background:radial-gradient(circle at 50% 50%, #f0f0f2 0 18%, #dadce2 19% 40%, #babec8 41% 43%, #e9ebef 44% 62%, #c4c8d1 63% 66%, #d9dbe1 67% 100%)}
+.vinyl-label{position:relative;z-index:1;width:26px;height:26px;border-radius:50%;overflow:hidden;background:var(--orange);display:grid;place-items:center;color:#fff;font-size:12px;font-weight:800;box-shadow:0 0 0 2px #ffffff12}
+.vinyl-label img{width:100%;height:100%;object-fit:cover;display:block}
+.mini-vinyl.spinning{animation:vinylSpin 5.2s linear infinite}
+@keyframes vinylSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.mini-text strong{font-size:15px;font-weight:760;line-height:1.1}.mini-text small{font-size:12px;line-height:1.1}
+.mini-marquee{display:flex;align-items:center}
+.mini-control{width:42px;height:42px;font-size:22px}
+@media(max-width:620px){.mini-player{height:116px}.mini-vinyl{width:60px;height:60px}.mini-main{height:88px;padding:14px 18px 0 18px}}
+
+/* v1.0.9: artwork is a real Play target, same flat visual appearance */
+.song-art-play{display:grid;place-items:center;flex-shrink:0;width:57px;height:57px;border:0;background:none;padding:0;border-radius:9px;overflow:hidden}
+.song-art-play img,.song-art-play .placeholder-cover{width:100%;height:100%;object-fit:cover;border-radius:9px}
+.song-art-play:active{transform:scale(.96)}
+@media(min-width:621px){.song-art-play{width:57px;height:57px}}
+
+/* AURA AMP v1.1.0 Flat UIX: exact dark family, artist catalog and lyrics */
+[data-theme="dark"]{--canvas:#0c101b;--phone:#1b1d24;--nav:#25272e;--ink:#f6f4f4;--secondary:#a9a7b2;--pill:#2b2e36;--divider:#323640;--outline:#3b4049;--orange:#FF7A00;--gradient:radial-gradient(ellipse at 72% -12%,#1f304e 0%,transparent 46%),radial-gradient(ellipse at 100% -15%,#542d1d 0%,transparent 25%),#0e121f}
+[data-theme="dark"] body{background:var(--gradient)}
+.player-controls{display:grid;grid-template-columns:64px 66px 64px;gap:29px;justify-content:center;align-items:center;margin:28px 0 23px;width:100%}
+.player-controls button{display:grid;place-items:center;width:54px;height:54px;padding:0;margin:auto}
+.player-controls .big-play{width:62px;height:62px;border-radius:50%;box-shadow:none;color:#fff}
+.player-controls .big-play svg{width:29px;height:29px;fill:none;stroke:none;color:white;display:block}
+.player-controls button:not(.big-play) svg{width:29px;height:29px;color:var(--ink);fill:none;stroke:none}
+.player-actions{align-items:center;margin:0 5px 15px}
+.player-actions button{display:flex;align-items:center;flex-direction:column;gap:2px;justify-content:center;min-width:31px;min-height:36px}
+.microphone-icon{font-size:27px;line-height:23px}.karaoke-label{font-size:9px}
+.artist-under-title,.artist-under-album{color:var(--secondary);font-size:18px;display:block;text-align:center;margin:6px auto 0;background:none;border:none;padding:3px}
+.artist-under-album{text-align:left;margin:3px 0 8px;font-size:14px}
+.catalog-result{display:flex;align-items:center;text-align:left;gap:12px;padding:6px 0;background:none;border:0;width:100%;min-height:68px}
+.catalog-result img,.catalog-result .placeholder-cover{height:54px;width:54px;object-fit:cover;border-radius:11px;flex-shrink:0}
+.catalog-result span:nth-child(2){flex:1;min-width:0}.catalog-result strong,.catalog-result small{display:block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.catalog-result strong{font-size:14px}.catalog-result small{font-size:12px;color:var(--secondary);margin-top:5px}.catalog-chevron{font-size:22px;color:var(--secondary)}
+.artist-hero{height:225px;border-radius:22px;background:var(--pill);overflow:hidden;position:relative;margin-bottom:14px}
+.artist-hero img{width:100%;height:100%;object-fit:cover}
+.artist-hero:after{content:"";position:absolute;inset:34% 0 0;background:linear-gradient(transparent,#000d)}
+.artist-hero-caption{position:absolute;z-index:1;left:17px;right:13px;bottom:15px;color:white}
+.artist-hero-caption h1{font-size:32px;line-height:1.05;margin:0 0 5px}.artist-hero-caption small{font-size:12px;color:#e2e1e5}
+.artist-buttons{display:flex;gap:12px;margin:12px 0 25px}.artist-buttons button{border:1px solid var(--outline);border-radius:35px;padding:11px 24px;background:transparent;font-size:14px;font-weight:650}.artist-buttons .primary{background:var(--orange);border-color:var(--orange);color:white}
+.artist-bio{font-size:13px;line-height:1.7;color:var(--secondary);padding-bottom:32px}
+.karaoke-switch{display:flex;align-items:center;gap:8px;margin:0 0 16px}
+.karaoke-switch button{flex:1;min-height:37px;background:var(--pill);border:1px solid var(--outline);border-radius:20px;color:var(--ink);font-size:12px}
+.karaoke-switch button.active{background:var(--orange);color:white;border-color:var(--orange)}
+.karaoke-lines{flex:1;min-height:190px;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none;display:flex;flex-direction:column;gap:17px;padding:20px 8px 32px;text-align:center;mask-image:linear-gradient(transparent,#000 10%,#000 85%,transparent)}
+.karaoke-lines::-webkit-scrollbar{display:none}
+.lyric-line{font-size:21px;line-height:1.3;color:var(--secondary);opacity:.75;transition:color .2s,opacity .2s,transform .2s}
+.lyric-line.active{color:var(--orange);font-weight:780;opacity:1;transform:scale(1.045)}
+.karaoke-message{margin:auto;color:var(--secondary);font-size:14px}
+.player-screen .scroll-area{min-height:0}.player-screen .wave-timeline{flex-shrink:0}
+@media(max-width:620px){.player-controls{grid-template-columns:64px 68px 64px;gap:clamp(20px,8vw,45px)}.artist-hero{height:265px}.lyric-line{font-size:clamp(21px,5.5vw,27px)}}
+
+/* Home-library integrations respect the approved Flat UIX language */
+.server-status{margin:9px 0 13px;color:var(--secondary);font-size:12px;line-height:1.55}
+.server-rows{margin:4px 0 22px}.server-rows .song-row{border-bottom:1px solid var(--outline)}
+.server-tag{font-size:10px;color:var(--orange);margin-top:3px}
+
+/* v1.2.1 — reference-aligned transport and cast button */
+.player-controls{position:relative;display:grid!important;grid-template-columns:54px 70px 54px;column-gap:clamp(24px,7vw,43px);align-items:center;justify-content:center;width:100%;margin:29px auto 35px;padding-right:0}
+.player-controls>button{height:54px;width:54px;display:grid;place-items:center;padding:0;margin:0;border-radius:50%;background:transparent;color:var(--ink);box-shadow:none}
+.player-controls>button svg{width:27px;height:27px;fill:currentColor;stroke:currentColor}
+.player-controls>.big-play{height:62px;width:62px;justify-self:center;align-self:center;background:var(--aura-orange-gradient)!important;border-radius:50%;box-shadow:inset 0 1px 1px #ffffff95,0 3px 6px #c94f0036,0 10px 20px #ff76002b!important;color:white!important}
+.player-controls>.big-play svg{height:30px;width:30px;fill:#fff;stroke:#fff}
+.player-controls>.cast-player-button{position:absolute;right:0;top:50%;transform:translateY(-50%);height:40px;width:40px;color:var(--secondary);background:none;border:0;box-shadow:none}
+.player-controls>.cast-player-button svg{height:23px;width:23px;fill:none;stroke:currentColor}
+[data-theme=dark] .player-controls>.big-play{background:var(--aura-orange-gradient)!important;box-shadow:inset 0 1px 1px #ffd28c9c,0 6px 18px #e45d0066!important}
+@media(max-width:360px){.player-controls{column-gap:19px}.player-controls>.cast-player-button{right:-5px}}
+
+[data-theme="light"] .player-controls>button:not(.big-play):not(.cast-player-button){color:var(--orange)}
+[data-theme="dark"] .player-controls>button:not(.big-play):not(.cast-player-button){color:var(--ink)}
+
+/* Real Cast icon overlays the same position in the Android host; browser preview keeps its own glyph */
+
+/* AURA AMP 1.2.6: splash follows existing Flat UIX palette and has no demo content */
+.aura-startup{position:fixed;inset:0;z-index:10000;background:var(--canvas);display:flex;align-items:center;justify-content:center;overflow:hidden;opacity:1;visibility:visible;transition:opacity .44s ease,visibility .44s ease}
+.aura-startup::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 83% -8%,rgba(255,123,26,.11),transparent 44%),radial-gradient(ellipse at 10% 100%,rgba(255,124,22,.075),transparent 40%);pointer-events:none}
+[data-theme="dark"] .aura-startup{background:#0c101b}
+[data-theme="light"] .aura-startup{background:#fbf8f7}
+.aura-startup.is-done{opacity:0;visibility:hidden;pointer-events:none}
+.aura-startup-center{position:relative;width:min(90vw,390px);display:flex;flex-direction:column;align-items:center;text-align:center;transform:translateY(-2vh)}
+.aura-startup-symbol{width:98px;height:98px;display:grid;place-items:center;background:linear-gradient(145deg,#35373c,#11141e);border:1px solid #ffffff27;border-radius:28px;box-shadow:0 14px 42px #0003;animation:auraSplashRise .7s cubic-bezier(.16,1,.3,1) both}
+.aura-startup-symbol svg{width:69px;height:59px;color:#fff}
+.aura-startup-wordmark{margin-top:29px;font-size:35px;letter-spacing:-1.4px;font-weight:850;color:var(--ink);white-space:nowrap}
+.aura-startup-wordmark b{color:var(--orange)}
+.aura-startup-tagline{margin-top:7px;font-size:9px;letter-spacing:3px;font-weight:700;color:var(--secondary)}
+.aura-startup-line{width:125px;height:3px;background:var(--pill);margin-top:39px;overflow:hidden;border-radius:5px}
+.aura-startup-line::after{content:"";display:block;width:35%;height:100%;border-radius:5px;background:linear-gradient(90deg,#ff9c3c,var(--orange),#ea5e13);animation:auraSplashProgress 1.6s ease-in-out infinite}
+.aura-startup-status{color:var(--secondary);margin-top:17px;min-height:18px;font-size:12px;letter-spacing:.1px}
+@keyframes auraSplashProgress{0%{transform:translateX(-110%)}100%{transform:translateX(390%)}}
+@keyframes auraSplashRise{from{opacity:0;transform:scale(.87) translateY(17px)}to{opacity:1;transform:scale(1) translateY(0)}}
+@media(prefers-reduced-motion:reduce){.aura-startup-symbol,.aura-startup-line::after{animation:none}.aura-startup-line::after{transform:none;width:100%}}
+
+/* Aura Amp 1.3 Flat UIX additions */
+.mini-player{top:0!important;left:0;right:0;border-radius:0 0 27px 27px!important;}
+.mini-main{padding-top:max(14px,env(safe-area-inset-top))!important;}
+.screen.with-mini .scroll-area{padding-top:calc(142px + env(safe-area-inset-top))!important}
+.settings-row span:last-child{font-size:20px;font-weight:800}
+.bottom-nav .heart-discovery{color:#ff751b!important;transform:scale(1.25)}
+.bottom-nav .heart-discovery svg{fill:#ff751b;stroke:#ff751b}
+.aura-list-cover{width:50px;height:50px;border-radius:12px;display:grid;place-items:center;flex-shrink:0;color:white;overflow:hidden;background-position:center;background-size:cover;padding:4px;text-align:center}
+.aura-list-cover span{font-size:10px;line-height:1.1;font-weight:850;letter-spacing:-.3px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;text-shadow:0 1px 8px #0008}
+.aura-list-cover.big{width:min(245px,80%);height:215px;border-radius:25px;margin:8px auto 15px}
+.aura-list-cover.big span{font-size:29px;letter-spacing:-1px;padding:8px}
+.new-cover-preview{width:100%;aspect-ratio:1.3;max-height:250px;border-radius:22px;display:grid;place-items:center;color:white;background-size:cover;background-position:center;margin:18px 0 24px}
+.new-cover-preview span{font-size:clamp(26px,8vw,44px);font-weight:900;text-align:center;padding:18px;line-height:1.05;text-shadow:0 2px 15px #0008;letter-spacing:-1px}
+.settings-label textarea{background:var(--pill);border:0;border-radius:14px;padding:12px;color:var(--ink);font:inherit;font-size:14px;resize:vertical}
+.cover-label{font-size:13px;font-weight:750}.cover-picker{display:flex;gap:9px;overflow-x:auto;margin-bottom:15px}.cover-choice{width:56px;height:56px;border-radius:13px;border:2px solid transparent;flex-shrink:0;color:white;font-size:23px}.cover-choice.chosen{border-color:var(--orange)}
+.playlist-utility{display:flex;gap:12px;margin:10px 0 16px}.playlist-utility button{background:var(--pill);border:none;border-radius:14px;padding:12px;color:var(--ink);font-size:12px;flex:1}
+.swipe-card{background:var(--pill);border-radius:26px;padding:16px;text-align:center;touch-action:pan-y;margin-top:24px}.swipe-card>img{width:100%;max-height:330px;object-fit:cover;aspect-ratio:1;border-radius:19px}.swipe-card h2{font-size:25px;margin:17px 0 5px}.swipe-card p{color:var(--secondary);margin:0 0 24px}.swipe-actions{display:flex;gap:12px}.swipe-actions button{flex:1;border:none;background:var(--phone);border-radius:40px;padding:14px;color:var(--ink);font-weight:750}.swipe-actions button:last-child{background:var(--aura-orange-gradient);color:white}
+.karaoke-under-title{display:block;margin:13px auto 0;padding:8px 17px;border:1px solid var(--outline);background:var(--pill);color:var(--orange);border-radius:24px;font-size:12px;font-weight:750}
+
+/* Custom AuraOS iOS-style Toggle Switch Slider */
+.aura-switch{position:relative;display:inline-block;width:50px;height:28px;flex-shrink:0}
+.aura-switch input{opacity:0;width:0;height:0}
+.aura-slider{position:absolute;cursor:pointer;inset:0;background-color:#3a3f4d;transition:.25s;border-radius:28px;box-shadow:inset 0 1px 3px rgba(0,0,0,0.4)}
+.aura-slider:before{position:absolute;content:"";height:22px;width:22px;left:3px;bottom:3px;background-color:#ffffff;transition:.25s;border-radius:50%;box-shadow:0 2px 6px rgba(0,0,0,0.35)}
+.aura-switch input:checked+.aura-slider{background:var(--aura-orange-gradient,#FF7A00)!important}
+.aura-switch input:checked+.aura-slider:before{transform:translateX(22px)}
+
+/* v1.3.1 — glossy control skin */
+.aura-orange-button,.settings-primary,.category-chips button.selected,.swipe-actions button.swipe-like{background:var(--aura-orange-gradient)!important;color:white!important;border:1px solid #ffb45c66!important;box-shadow:inset 0 1px 1px #ffffff95,0 3px 6px #c94f0036,0 8px 18px #ff760035!important;text-shadow:0 1px 1px #b94d0040}
+[data-theme="dark"] .aura-orange-button,[data-theme="dark"] .settings-primary,[data-theme="dark"] .category-chips button.selected,[data-theme="dark"] .swipe-actions button.swipe-like{background:var(--aura-orange-gradient)!important}
+.bottom-nav .heart-discovery{width:48px!important;height:48px!important;min-width:48px!important;padding:0!important;display:grid!important;place-items:center!important;border-radius:50%!important;transform:none!important;background:var(--aura-orange-gradient)!important;border:1px solid #ffb45c66!important;box-shadow:inset 0 1px 1px #ffffff95,0 3px 6px #c94f0036,0 8px 18px #ff760035!important;color:white!important}
+.bottom-nav .heart-discovery svg{fill:white!important;stroke:white!important;width:23px;height:23px}
+.category-chips button.selected{border-radius:999px!important;padding-left:16px!important;padding-right:16px!important}
+.swipe-card{will-change:transform,opacity;transition:transform 260ms cubic-bezier(.2,.8,.2,1),opacity 260ms ease}
+.swipe-card.swipe-enter{animation:swipeCardEnter 320ms cubic-bezier(.16,1,.3,1) both}
+.swipe-card.swipe-out-left{transform:translateX(-115%) rotate(-13deg)!important;opacity:0!important}
+.swipe-card.swipe-out-right{transform:translateX(115%) rotate(13deg)!important;opacity:0!important}
+@keyframes swipeCardEnter{from{transform:translateY(14px) scale(.965);opacity:0}to{transform:translateY(0) scale(1);opacity:1}}
+@media(prefers-reduced-motion:reduce){.swipe-card{transition:none!important}.swipe-card.swipe-enter{animation:none!important}}
+
+/* v1.3.2: shared high-contrast orange button finish from Now Playing */
+.bottom-nav button.heart-discovery,
+.category-chips button.selected,
+.settings-group button.settings-primary,
+.swipe-card button.swipe-like,
+.swipe-card button.swipe-preview-play{
+ background:var(--aura-orange-gradient)!important;
+ color:#fff!important;border:1px solid #ffac4480!important;
+ box-shadow:inset 0 2px 1px #ffffffa5,0 3px 7px #bf49004a,0 9px 22px #ff760041!important;
+ text-shadow:0 1px 1px #bc540040!important;
+}
+[data-theme="dark"] .bottom-nav button.heart-discovery,
+[data-theme="dark"] .category-chips button.selected,
+[data-theme="dark"] .settings-group button.settings-primary,
+[data-theme="dark"] .swipe-card button.swipe-like,
+[data-theme="dark"] .swipe-card button.swipe-preview-play{
+ background:var(--aura-orange-gradient)!important;
+}
+.bottom-nav button.heart-discovery{border-radius:50%!important;transform:none!important}
+.bottom-nav button.heart-discovery svg{fill:white!important;stroke:white!important}
+.category-chips button.selected{border-radius:999px!important}
+.settings-group button.settings-primary{border-radius:24px!important}
+.swipe-preview-play{width:100%;margin:8px 0 16px;padding:13px 18px;border-radius:999px;font-weight:800;font-size:14px}
+.swipe-actions button.swipe-like{border-radius:40px!important}
+/* Floating top dock gets its own surface, distinct from the page behind it */
+.mini-player{background:linear-gradient(140deg,#fff5ef,#ffe9dd)!important;border-bottom:1px solid #e8bdaa!important;box-shadow:0 8px 24px #36201e26!important}
+[data-theme="dark"] .mini-player{background:linear-gradient(145deg,#2b303b 0%,#20242e 100%)!important;border-bottom:1px solid #4e3a34!important;box-shadow:0 9px 28px #0007!important}
+.playlist-picker{z-index:10100}
+.playlist-picker>.settings-primary{margin:10px 0 14px}
+
+
+/* v1.3.3 — accessible player controls above Android bottom gestures */
+.player-screen .scroll-area{padding-bottom:max(84px,calc(env(safe-area-inset-bottom) + 68px))!important;overscroll-behavior-y:contain}
+.player-screen .center-head{margin-bottom:13px!important;flex-shrink:0}
+.player-screen .player-art{flex-shrink:1}
+.player-screen .cover-large,.player-screen .missing-cover{max-width:min(65vw,300px)!important;max-height:min(37vh,300px)!important;object-fit:contain}
+.player-screen .player-song{margin-top:15px!important}
+.player-screen .wave-timeline{margin-top:12px!important;padding-top:0!important;min-height:65px!important}
+.player-screen .player-controls{margin:8px auto 14px!important}
+.player-screen .player-actions{position:relative;z-index:4;margin:0 0 18px!important;padding:2px 0 6px!important;display:flex!important;align-items:center;justify-content:space-around;flex-shrink:0;touch-action:manipulation}
+.player-screen .player-actions button{min-width:50px!important;min-height:48px!important;border-radius:14px!important;position:relative;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.player-screen .player-actions button.active{color:#ff7916!important;background:rgba(255,117,27,.12)!important}
+.player-screen .player-actions button.active svg{stroke:#ff7916!important;fill:none!important}
+.player-screen .player-actions button[data-fav].active svg{fill:#ff7916!important;stroke:#ff7916!important}
+.player-screen .player-actions small{position:absolute;right:7px;bottom:3px;font-size:10px;color:#ff7916}
+.player-mode-tabs{display:flex;justify-content:center;gap:14px;margin:0 0 14px;flex-shrink:0}
+.player-mode-tabs button{min-width:47px;min-height:40px;border:0;border-radius:14px;background:var(--pill);color:var(--secondary);display:grid;place-items:center}
+.player-mode-tabs button.active{background:rgba(255,121,22,.13);color:var(--orange)}
+.player-mode-tabs svg{width:23px;height:23px}
+.player-screen .karaoke-lines{flex:0 1 auto;max-height:min(41vh,340px);min-height:180px;margin-bottom:6px}
+.player-video{text-align:center;display:flex;align-items:center;flex-direction:column;gap:12px;margin-bottom:12px}
+.player-video .player-video-art{width:min(52vw,230px);max-width:230px}
+.player-video p{color:var(--secondary);font-size:12px;margin:0}
+.player-video .settings-primary{max-width:275px}
+.player-queue{border-top:1px solid var(--outline);display:flex;flex-direction:column;gap:6px;padding:16px 0 12px}
+.player-queue>strong{font-size:14px}
+.player-queue button{border:0;border-radius:10px;background:var(--pill);color:var(--ink);padding:12px;text-align:left;font-size:13px}
+.player-queue button small{display:block;font-size:11px;color:var(--secondary);margin-top:4px}
+.player-queue button.active{color:var(--orange)}
+@media(max-height:750px){.player-screen .cover-large,.player-screen .missing-cover{max-height:28vh!important}.player-screen .player-song{margin-top:10px!important}.player-screen .wave-timeline{min-height:58px!important}}
+
+/* AURA AMP 1.3.4 — single source of truth for ALL orange action gradients */
+:root,[data-theme="dark"]{
+ --orange:#FF7A00;
+ --aura-orange-gradient:linear-gradient(180deg,#FFA214 0%,#FF7A00 50%,#E65100 100%);
+}
+.player-controls>.big-play,
+.bottom-nav button.heart-discovery,
+.category-chips button.selected,
+.settings-primary,
+.settings-group button.settings-primary,
+.aura-orange-button,
+.swipe-actions button.swipe-like,
+.swipe-card button.swipe-preview-play,
+.playlist-buttons button.primary,
+.artist-buttons button.primary,
+.player-video button.settings-primary,
+.download-action,
+.arl-help-done {
+ background:var(--aura-orange-gradient)!important;
+ color:#fff!important;
+ border:1px solid #ffad5d75!important;
+ box-shadow:inset 0 1px 1px #ffffff80,0 4px 13px #9d490030!important;
+ text-shadow:0 1px 1px #8b30003b;
+}
+.player-controls>.big-play,.bottom-nav button.heart-discovery{border-radius:50%!important}
+.player-screen .player-actions button.active{color:var(--orange)!important}
+.bottom-nav{
+ margin:0 12px max(8px,env(safe-area-inset-bottom,0px))!important;
+ width:auto!important;
+ height:64px!important;
+ border:1px solid var(--outline)!important;
+ border-radius:26px!important;
+ padding:7px 12px!important;
+ box-shadow:0 10px 28px #00000023!important;
+ flex-shrink:0!important;
+}
+.arl-help-overlay{position:fixed;inset:0;z-index:2000;background:var(--phone);color:var(--ink);display:flex;flex-direction:column;animation:arlSlideIn .32s cubic-bezier(.16,1,.3,1) both}
+.arl-help-overlay.closing{animation:arlSlideOut .27s ease-in both}
+.arl-help-body{flex:1;overflow-y:auto;padding:max(28px,env(safe-area-inset-top)) 26px 12px}
+.arl-help-overlay h1{font-size:27px;letter-spacing:-.8px;margin:8px 0 16px}
+.arl-step{display:flex;gap:16px;padding:17px 0;border-bottom:1px solid var(--outline)}
+.arl-step-number{display:grid;place-items:center;flex:0 0 43px;height:43px;border-radius:15px;background:var(--pill);color:var(--orange);font-weight:850}
+.arl-step p{margin:3px 0;line-height:1.5;font-size:14px}
+.arl-help-footer{padding:15px 24px max(18px,env(safe-area-inset-bottom));border-top:1px solid var(--outline);background:var(--phone)}
+.arl-help-done{width:100%;min-height:52px;border-radius:18px;font-weight:800;font-size:15px}
+.arl-secret-input{font-family:inherit;letter-spacing:.05em}
+.arl-warning{color:var(--secondary);font-size:11px;line-height:1.45}
+.download-action{min-height:44px;border-radius:18px;display:flex;align-items:center;justify-content:center;gap:8px;padding:8px 15px;font-weight:750}
+.player-download{margin:0 auto 12px;max-width:250px;width:100%}
+.album-download{margin:10px auto 15px;max-width:270px}
+@keyframes arlSlideIn{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@keyframes arlSlideOut{from{transform:translateY(0)}to{transform:translateY(105%)}}
+@media(prefers-reduced-motion:reduce){.arl-help-overlay,.arl-help-overlay.closing{animation:none}}
+
+/* v1.3.6 — Library folders, toggled offline buttons and aggregate batch progress */
+.library-folder{width:100%;display:flex;align-items:center;gap:13px;text-align:left;border:1px solid var(--outline);background:var(--phone);padding:13px;border-radius:18px;margin:10px 0 6px;color:var(--ink)}
+.library-folder-icon{width:52px;height:52px;display:grid;place-items:center;border-radius:15px;background:var(--pill);color:var(--orange);font-size:23px;font-weight:750;flex-shrink:0}
+.library-folder .song-info{min-width:0;flex:1}.library-folder .song-info small{display:block;margin-top:4px;color:var(--secondary)}
+.folder-chevron{color:var(--orange);font-size:28px;margin-right:6px}
+.favorites-strip{display:flex;align-items:flex-start;gap:12px;overflow-x:auto;padding:9px 1px 18px;scroll-snap-type:x mandatory;scrollbar-width:none}
+.favorites-strip::-webkit-scrollbar{display:none}
+.favorites-strip button{border:0;background:none;width:90px;flex:0 0 90px;min-height:102px;color:var(--ink);padding:0;text-align:left;scroll-snap-align:start}
+.favorites-strip button img,.favorites-strip .placeholder-cover{width:90px;height:90px;border-radius:13px;object-fit:cover}
+.favorites-strip button small{display:block;font-size:10px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;margin-top:5px}
+.song-row .track-download-toggle{margin:0 1px 0 auto;flex:0 0 37px;align-self:center}
+.track-download-toggle{border:0;background:var(--pill);color:var(--secondary);width:37px;height:37px;border-radius:50%;display:inline-grid;place-items:center;padding:6px;touch-action:manipulation;transition:background .17s,color .17s}
+.track-download-toggle svg{width:23px;height:23px;stroke:currentColor;fill:none}
+.track-download-toggle.downloaded{background:var(--aura-orange-gradient);color:white;box-shadow:inset 0 1px 1px #fff7,0 4px 10px #a4500036}
+.player-screen .player-actions .track-download-toggle{flex:0 0 43px;width:43px;height:43px;border-radius:50%;min-width:43px!important;min-height:43px!important}
+.player-screen .player-actions .track-download-toggle:not(.downloaded){background:var(--pill)!important;color:var(--secondary)!important}
+.player-screen .player-actions .track-download-toggle.downloaded{background:var(--aura-orange-gradient)!important;color:white!important}
+.player-screen .player-actions .track-download-toggle svg{width:24px;height:24px;stroke:currentColor!important}
+.screen-header{position:relative}
+.download-queue-indicator{margin-left:auto;position:relative;width:35px;height:35px;border:1px solid var(--outline);background:var(--pill);color:var(--orange);border-radius:11px;overflow:hidden;padding:0;display:grid;place-items:center;flex-shrink:0}
+.download-queue-fill{position:absolute;left:0;right:0;bottom:0;background:var(--aura-orange-gradient);transition:height .3s ease}
+.download-queue-symbol{position:relative;z-index:1;font-size:20px;font-weight:800;color:var(--ink)}
+.download-queue-panel{position:absolute;top:60px;right:16px;left:16px;padding:17px;z-index:105;background:var(--phone);border:1px solid var(--outline);border-radius:19px;box-shadow:0 10px 34px #0003;display:flex;flex-direction:column;gap:10px}
+.download-queue-panel strong{font-size:14px}.download-queue-panel span,.download-queue-panel small{color:var(--secondary);font-size:11px}
+.download-queue-track{height:8px;border-radius:100px;background:var(--pill);overflow:hidden}
+.download-queue-track span{display:block;background:var(--aura-orange-gradient);height:100%;border-radius:100px;transition:width .25s ease}
+@media(max-width:620px){.song-row .song-info{min-width:0}.song-row .track-download-toggle{margin-left:auto}}
+
+/* v1.3.7 — borderless library sections with shared orange AURA icon finish */
+.library-folder{background:transparent!important;border:0!important;box-shadow:none!important;padding:9px 0!important;border-radius:0!important}
+.library-folder-icon{background:var(--aura-orange-gradient)!important;color:#fff!important;border-radius:50%!important;width:49px!important;height:49px!important}
+.library-folder-icon svg{width:25px;height:25px;stroke:#fff!important;fill:none}
+.library-folder[data-nav="favorites"] .library-folder-icon svg{fill:white!important;stroke:white!important}
+.library-folder .folder-chevron{margin-left:auto!important}
+.playlist-buttons .icon-collection-action,.playlist-utility .icon-collection-action,.album-download.icon-collection-action{display:inline-flex!important;align-items:center;justify-content:center;border:0!important;width:50px!important;height:50px!important;min-width:50px!important;min-height:50px!important;padding:11px!important;border-radius:50%!important;background:var(--pill)!important;color:var(--ink)!important;box-shadow:none!important}
+.playlist-buttons .icon-collection-action svg,.playlist-utility .icon-collection-action svg,.album-download.icon-collection-action svg{width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:1.8}
+.playlist-buttons .icon-collection-action.primary{background:var(--aura-orange-gradient)!important;color:#fff!important}
+.playlist-buttons .icon-collection-action.primary svg{fill:#fff;stroke:#fff}
+.playlist-buttons .icon-collection-action.favorite-active{background:var(--aura-orange-gradient)!important;color:#ffffff!important}
+.playlist-buttons .icon-collection-action.favorite-active svg{fill:none!important;stroke:#ffffff!important;stroke-width:1.8!important}
+.playlist-utility{display:flex;gap:12px;justify-content:center;margin:10px 0}
+.album-download.icon-collection-action{margin:8px 10px 16px!important;display:inline-flex!important}
+.collection-download.icon-collection-action{background:var(--pill)!important;color:var(--secondary)!important;border:1px solid var(--outline)!important;position:relative;overflow:hidden;transition:background .25s,color .25s}
+.collection-download.icon-collection-action.downloaded{background:var(--aura-orange-gradient)!important;color:#fff!important;border:1px solid #ff7a00!important}
+.download-queue-done{margin-top:8px;display:block;width:100%;min-height:42px;border-radius:14px;background:var(--aura-orange-gradient)!important;border:0!important;color:#fff!important;font-weight:800;font-size:14px}
+
+/* AURA AMP — round playlist tools, visible play-next, cohesive action sheet */
+.playlist-buttons .icon-collection-action,.playlist-utility .icon-collection-action,.album-add-to-playlist.icon-collection-action,.collection-download.icon-collection-action{width:50px!important;height:50px!important;min-width:50px!important;min-height:50px!important;flex:0 0 50px!important;aspect-ratio:1;border-radius:100%!important;padding:11px!important}
+.playlist-utility .icon-collection-action{flex:0 0 50px!important}
+.collection-download.icon-collection-action.downloaded{background:var(--aura-orange-gradient)!important;color:white!important;border-color:transparent!important}
+.album-add-to-playlist.icon-collection-action{font-size:24px!important;background:var(--pill)!important;color:var(--ink)!important}
+.clear-search{background:var(--aura-orange-gradient)!important;color:#fff!important;border:0!important;border-radius:100%!important;width:32px!important;height:32px!important;min-width:32px!important;display:grid!important;place-items:center!important;font-size:23px!important;line-height:1!important;padding:0!important}
+.song-row .mini-play-next{display:grid;place-items:center;border:0;background:transparent;color:var(--secondary);border-radius:100%;width:32px;min-width:32px;height:34px;padding:5px}
+.song-row .mini-play-next svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8}
+.action-sheet:not(.playlist-picker)>button[data-action]{display:flex;align-items:center;gap:15px;padding:13px 9px!important;min-height:53px;border-bottom:0!important;border-radius:13px;font-weight:550}
+.action-sheet:not(.playlist-picker)>button[data-action]:active{background:var(--pill)}
+.action-sheet .action-glyph{width:36px;height:36px;min-width:36px;display:grid;place-items:center;background:var(--pill);color:var(--orange);border-radius:100%;font-size:22px}
+.action-sheet .action-glyph svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8}
+.action-sheet .action-head{margin-bottom:9px}
+.player-controls>.airplay-player-button{position:absolute!important;left:0;top:50%;transform:translateY(-50%);width:40px!important;height:40px!important;display:grid!important;place-items:center;color:var(--secondary)!important}
+.player-controls>.airplay-player-button svg{width:23px;height:23px;fill:none;stroke:currentColor}
+
+/* Hotfix: a single compact, ordered row of five equally sized circular controls. */
+.playlist-buttons{display:flex!important;align-items:center!important;justify-content:center!important;flex-wrap:nowrap!important;gap:clamp(5px,2.2vw,12px)!important;width:100%!important;margin:12px 0 16px!important}
+.playlist-buttons>.icon-collection-action,.playlist-buttons>.round-add{width:clamp(40px,12.5vw,50px)!important;height:clamp(40px,12.5vw,50px)!important;min-width:0!important;min-height:0!important;flex:0 0 clamp(40px,12.5vw,50px)!important;border-radius:100%!important;display:grid!important;place-items:center!important;margin:0!important;padding:9px!important}
+.playlist-buttons>.round-add{border:0!important;background:var(--pill)!important;color:var(--orange)!important;font-size:27px!important;line-height:1!important;padding:0!important}
+.playlist-buttons>.collection-download.downloaded{background:var(--aura-orange-gradient)!important;color:#fff!important;border:0!important}
+
+/* Linked music-video playback stays inside the AURA AMP Now Playing view. */
+.aura-video-player{width:100%;aspect-ratio:16/9;overflow:hidden;border-radius:16px;background:#090b10}
+.aura-video-embed{width:100%;height:100%;display:block;border:0;background:#090b10;object-fit:contain}
+.aura-video-label{display:flex;flex-direction:column;align-items:center;gap:5px;padding:13px 0}
+.aura-video-label strong{color:var(--ink);font-size:15px}
+.aura-video-label small{color:var(--secondary);font-size:12px}
+
+.settings-tab-bar{display:flex;gap:6px;margin:0 0 20px;background:var(--pill);padding:4px;border-radius:30px;overflow-x:auto;scrollbar-width:none}
+.settings-tab-bar::-webkit-scrollbar{display:none}
+.settings-tab-bar button{flex:1 0 auto;min-width:70px;border:0;background:transparent;color:var(--secondary);padding:8px 12px;border-radius:26px;font-weight:750;font-size:12.5px;transition:background .2s,color .2s;white-space:nowrap}
+.settings-tab-bar button.active{background:var(--aura-orange-gradient,#FF7A00)!important;color:#ffffff!important}
+
+.player-controls .auraplay-player-button{background:#2b2e37!important;color:#ffffff!important;width:44px!important;height:44px!important;border-radius:50%!important;border:1px solid rgba(255,255,255,0.18)!important;display:grid!important;place-items:center!important;padding:0!important;box-shadow:0 4px 12px rgba(0,0,0,0.25)!important;transition:transform .15s,background .15s}
+.player-controls .auraplay-player-button:active{transform:scale(.92);background:#383c48!important}
+.mini-control.mini-auraplay{background:#2b2e37!important;color:#ffffff!important;border-radius:50%!important;width:40px!important;height:40px!important;display:grid!important;place-items:center!important;padding:0!important;border:1px solid rgba(255,255,255,0.18)!important}
+.auraplay-card-btn{background:#2b2e37!important;color:#ffffff!important;border-radius:16px!important;border:1px solid rgba(255,255,255,0.12)!important;padding:14px 16px!important;display:flex!important;align-items:center!important;justify-content:space-between!important;width:100%!important;margin-bottom:10px!important;cursor:pointer!important;box-shadow:0 4px 14px rgba(0,0,0,0.2)!important}
+.auraplay-card-btn:active{background:#383c48!important}
+
+/* Sleep Mode Landscape Overlay (50-50 Split) */
+.sleep-mode-overlay{position:fixed;inset:0;z-index:2147483600;background:#05060a;color:#ffffff;display:flex;flex-direction:row;align-items:center;justify-content:space-between;padding:clamp(12px,3vw,24px);box-sizing:border-box;overflow:hidden;user-select:none}
+.sleep-mode-left{width:50%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px;box-sizing:border-box;text-align:center}
+.sleep-mode-art{width:min(58vh,310px);height:min(58vh,310px);border-radius:24px;object-fit:cover;box-shadow:0 20px 48px rgba(0,0,0,0.7);margin-bottom:12px}
+.sleep-mode-title{font-size:clamp(18px,3vw,26px);font-weight:850;margin:0 0 4px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:92%}
+.sleep-mode-artist{font-size:clamp(13px,2vw,17px);color:var(--orange,#FF7A00);font-weight:700;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:92%}
+
+.sleep-mode-right{width:50%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:12px 16px;box-sizing:border-box;position:relative}
+.sleep-mode-clock{font-size:clamp(44px,8.5vw,78px);font-weight:850;letter-spacing:1px;margin:auto 0;display:flex;align-items:center;justify-content:center}
+.sleep-mode-clock .sleep-hours{color:#ffffff;font-weight:850}
+.sleep-mode-clock .sleep-sep{color:rgba(255,255,255,0.4);margin:0 2px}
+.sleep-mode-clock .sleep-mins{color:var(--orange,#FF7A00);font-weight:850}
+
+.sleep-mode-bottom-bar{width:100%;display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:auto}
+.sleep-mode-controls{display:flex;align-items:center;justify-content:center;gap:clamp(10px,2.2vw,20px)}
+.sleep-mode-controls button{border:0;background:rgba(255,255,255,0.08);color:#ffffff;border-radius:50%;width:clamp(38px,6vw,46px);height:clamp(38px,6vw,46px);display:grid;place-items:center;padding:0;transition:transform 0.15s,background 0.15s}
+.sleep-mode-controls button svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8}
+.sleep-mode-controls button:active{transform:scale(0.92);background:rgba(255,255,255,0.2)}
+.sleep-mode-controls button.big-play{width:clamp(48px,8vw,58px);height:clamp(48px,8vw,58px);background:var(--aura-orange-gradient,#FF7A00)!important;color:#ffffff!important}
+.sleep-mode-controls button.big-play svg{fill:#ffffff!important;stroke:#ffffff!important;width:24px;height:24px}
+.sleep-mode-controls button.active{color:var(--orange,#FF7A00);background:rgba(255,122,0,0.2)}
+.sleep-mode-exit{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.18);color:rgba(255,255,255,0.8);padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer}
+
+/* TV Remote Overlay */
+.tv-remote-overlay{position:fixed;inset:0;z-index:2147483500;background:var(--phone,#1a1b22);color:var(--ink,#fff);display:flex;flex-direction:column;padding:clamp(16px,4vw,24px);box-sizing:border-box;overflow-y:auto}
+</style></head>
+<body data-theme="light">
+<div class="aura-startup" id="auraStartup" role="status" aria-live="polite" aria-label="AURA AMP starting">
+ <div class="aura-startup-center">
+  <div class="aura-startup-symbol" aria-hidden="true"><svg viewBox="0 0 55 46"><path d="M2 27h9l4-9 5 19 6-29 5 33 7-18 4 4h11" fill="none" stroke="currentColor" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round"/><circle cx="26" cy="4" r="2.5" fill="#ff7c12"/></svg></div>
+  <div class="aura-startup-wordmark">AURA <b>AMP</b></div>
+  <div class="aura-startup-tagline">MUSIC EXPERIENCE · FUTURE</div>
+  <div class="aura-startup-line" aria-hidden="true"></div>
+  <div class="aura-startup-status" id="auraStartupStatus">Starting AURA AMP…</div>
+ </div>
+</div>
+
+<header class="topbar">
+  <div class="identity"><div class="identity-icon"><svg viewBox="0 0 55 46" aria-hidden="true"><path d="M2 27h9l4-9 5 19 6-29 5 33 7-18 4 4h11" fill="none" stroke="currentColor" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round"/><circle cx="26" cy="4" r="2.5" fill="var(--orange)"/></svg></div><div><div class="wordmark">AURA <b>AMP</b></div><div class="tagline">MUSIC EXPERIENCE · FUTURE</div></div></div>
+  <div class="theme-controls"><span class="preview-label">v1.1.0 ALPHA · FLAT UIX</span><button id="themeSwitch" class="theme-switch" aria-label="Switch to dark mode"><span id="themeIcon"></span><span id="themeName">Dark mode</span></button></div>
+</header>
+<main class="stage"><section class="phone mobile-active" data-screen="discover" aria-label="AURA AMP"><div class="mobile-slot"></div></section></main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="local-metadata.js"></script>
+<script src="video-linker.js"></script>
+<script src="app.js"></script></body></html>

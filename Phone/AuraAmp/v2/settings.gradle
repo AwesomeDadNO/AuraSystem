@@ -1,0 +1,8 @@
+pluginManagement { repositories { google(); mavenCentral(); gradlePluginPortal() } }
+dependencyResolutionManagement { repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS); repositories { google(); mavenCentral() } }
+rootProject.name = 'AuraAmp'
+include ':app'
+include ':Modules:AuraMusicEngine'
+project(':Modules:AuraMusicEngine').projectDir = file('Modules/AuraMusicEngine')
+include ':Modules:AuraConnect:send'
+project(':Modules:AuraConnect:send').projectDir = file('Modules/AuraConnect/send')

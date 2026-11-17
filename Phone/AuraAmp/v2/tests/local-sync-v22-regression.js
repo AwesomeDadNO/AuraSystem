@@ -1,0 +1,13 @@
+const fs=require('fs');const assert=require('assert');const path=require('path');const root=path.resolve(__dirname,'../app/src/main');const read=(p)=>fs.readFileSync(path.join(root,p),'utf8');
+const app=read('assets/app.js'),native=read('java/com/aura/amp/MainActivity.java'),sync=read('java/com/aura/amp/LanSync.java'),manifest=read('AndroidManifest.xml');
+assert(app.includes('data-sync-start="1"')&&app.includes('data-sync-scan="1"'), 'Phone Sync Local/Scan Local buttons missing');
+assert(app.includes('One-time 6-digit code (10 minutes)')&&app.includes('maxlength="6"'),'Six-digit UI missing');
+assert(app.includes('auraSyncShareDialog')&&app.includes('Server aktiv'),'Sender popup and status missing');
+assert(app.includes('Sender brukerdata')&&app.includes('Mottar brukerdata'),'Transfer progress absent');
+assert(app.includes('data-check-update="1"'),'Update button missing from settings');
+assert(!/16-character|16-digit|data-sync-host|data-sync-port|data-sync-key/i.test(app),'Legacy manual IP/port/16-char UI present');
+assert(sync.includes('EXPIRE_MS=10*60_000L')&&sync.includes('"protocol"')&&sync.includes('"profiles"'),'Local Sync protocol or expiry incorrect');
+assert(sync.includes('AES/GCM/NoPadding')&&sync.includes('KeyAgreement'),'Encrypted session missing');
+assert(native.includes('advertiseLocalSync')&&native.includes('discoverLocalSync'),'Native NSD discovery missing');
+assert(manifest.includes('CHANGE_WIFI_MULTICAST_STATE')&&manifest.includes('ACCESS_WIFI_STATE'),'Discovery permissions missing');
+console.log('PASS AURA AMP mobile Local Sync v2.2: six-digit screen, update, discovery, progress, protocol');

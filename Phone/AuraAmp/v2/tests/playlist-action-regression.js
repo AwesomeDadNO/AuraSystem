@@ -1,0 +1,23 @@
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const src = fs.readFileSync(path.join(__dirname, '../app/src/main/assets/app.js'), 'utf8');
+const html = fs.readFileSync(path.join(__dirname, '../app/src/main/assets/index.html'), 'utf8');
+
+assert.match(src, /function addAlbumToPlaylist\(\)/);
+assert.match(src, /data-album-add-playlist="1"/);
+assert.match(src, /if\(d\.albumAddPlaylist\)\{addAlbumToPlaylist\(\)/);
+assert.match(src, /data-play-next="/);
+assert.match(src, /if\(d\.playNext\)\{/);
+assert.match(src, /else if\(d\.action==='next'\)\{queueNext\(item\)/);
+assert.match(src, /playlistAutoDownload:'wifi'/);
+assert.match(src, /\['off','Off'\]/);
+assert.match(src, /\['wifi','Automatically on Wi-Fi'\]/);
+assert.match(src, /\['always','Automatically on any network'\]/);
+assert.match(src, /persist\.downloadedPlaylistIds/);
+assert.match(src, /downloadCollection\(additions,p\.name\+' · new songs',persist\.playlistAutoDownload==='wifi'\)/);
+assert.match(src, /wifiOnly=persist\.offlineWifiOnly/);
+assert.match(html, /\.clear-search\{background:var\(--aura-orange-gradient\)/);
+assert.match(html, /\.playlist-utility \.icon-collection-action\{/);
+assert.match(html, /\.action-sheet \.action-glyph/);
+console.log('PASS playlist action and offline preference integration');

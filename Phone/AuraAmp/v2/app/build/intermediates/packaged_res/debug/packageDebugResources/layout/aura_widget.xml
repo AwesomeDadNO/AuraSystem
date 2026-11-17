@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/widget_root" android:layout_width="match_parent" android:layout_height="match_parent" android:gravity="center_vertical" android:orientation="vertical" android:padding="14dp" android:background="@drawable/widget_dark">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="horizontal" android:gravity="center_vertical">
+        <ImageView android:id="@+id/widget_art" android:layout_width="50dp" android:layout_height="50dp" android:layout_marginEnd="10dp" android:src="@mipmap/ic_launcher" android:scaleType="centerCrop" android:contentDescription="Album art" />
+        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:paddingStart="6dp">
+            <TextView android:id="@+id/widget_title" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="AURA AMP" android:textSize="16sp" android:textStyle="bold" android:maxLines="1" android:ellipsize="marquee" android:textColor="#FFFFFF" />
+            <TextView android:id="@+id/widget_artist" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Ready to play" android:textSize="12sp" android:layout_marginTop="4dp" android:maxLines="1" android:ellipsize="end" android:textColor="#AAAAAA" />
+        </LinearLayout>
+        <TextView android:id="@+id/widget_theme" android:layout_width="38dp" android:layout_height="48dp" android:text="◐" android:textSize="20sp" android:textColor="#FF801B" android:gravity="center" android:contentDescription="Toggle light or dark theme" />
+        <TextView android:id="@+id/widget_prev" android:layout_width="32dp" android:layout_height="48dp" android:text="⏮" android:textSize="20sp" android:textColor="#FFFFFF" android:gravity="center" android:contentDescription="Previous song" />
+        <TextView android:id="@+id/widget_play" android:layout_width="42dp" android:layout_height="48dp" android:text="▶" android:textStyle="bold" android:textColor="#FF801B" android:gravity="center" android:textSize="23sp" android:contentDescription="Play or pause"/>
+        <TextView android:id="@+id/widget_next" android:layout_width="36dp" android:layout_height="48dp" android:text="⏭" android:textColor="#FFFFFF" android:gravity="center" android:textSize="22sp" android:contentDescription="Next song" />
+    </LinearLayout>
+</LinearLayout>

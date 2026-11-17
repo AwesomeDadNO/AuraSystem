@@ -1,0 +1,12 @@
+/Users/awesomedad/Documents/GitHub/AuraSystem/AuraCore/AuraConnect/reciever/src/main/java/no/aura/os/v2/connect/PlaybackControl.kt
+/Users/awesomedad/Documents/GitHub/AuraSystem/AuraCore/AuraConnect/reciever/src/main/java/no/aura/os/v2/connect/LanAddress.kt
+/Users/awesomedad/Documents/GitHub/AuraSystem/AuraCore/AuraConnect/reciever/src/main/java/no/aura/os/v2/connect/ArlReceive.kt
+/Users/awesomedad/Documents/GitHub/AuraSystem/AuraCore/AuraConnect/reciever/src/main/java/no/aura/os/v2/connect/MediaServerReceive.kt
+/Users/awesomedad/Documents/GitHub/AuraSystem/AuraCore/AuraConnect/reciever/src/main/java/com/aura/connect/reciever/AuraReceiverService.kt
+/Users/awesomedad/Documents/GitHub/AuraSystem/AuraCore/AuraConnect/reciever/src/main/java/no/aura/os/v2/connect/PairingReceiver.kt
+/Users/awesomedad/Documents/GitHub/AuraSystem/AuraCore/AuraConnect/reciever/src/main/java/no/aura/os/v2/connect/PlaylistSync.kt
+/Users/awesomedad/Documents/GitHub/AuraSystem/AuraCore/AuraConnect/reciever/src/main/java/no/aura/os/v2/connect/CredentialReceive.kt
+/Users/awesomedad/Documents/GitHub/AuraSystem/AuraCore/AuraConnect/reciever/src/main/java/no/aura/os/v2/connect/v1/AuraConnectV1Import.kt
+/Users/awesomedad/Documents/GitHub/AuraSystem/AuraCore/AuraConnect/reciever/src/main/java/no/aura/os/v2/connect/Pairing.kt
+/Users/awesomedad/Documents/GitHub/AuraSystem/AuraCore/AuraConnect/reciever/src/main/java/no/aura/os/v2/connect/AmpPlaylistSource.kt
+/Users/awesomedad/Documents/GitHub/AuraSystem/AuraCore/AuraConnect/reciever/src/main/java/com/aura/connect/reciever/SystemPairingManager.kt
