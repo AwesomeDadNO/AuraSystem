@@ -17,12 +17,13 @@ enum class TvListingsAccess { GRANTED, REQUEST_RUNTIME_PERMISSION, UNAVAILABLE }
 
 object SystemContinuePolicy {
     fun mayRead(profileId: String, optedIn: Boolean, child: Boolean) = profileId.isNotBlank() && optedIn && !child
-    /** Artwork never forwards credentials or cleartext traffic. Supports https and local content URIs. */
+    /** Artwork supports https, http, content, file, and android.resource URIs. */
     fun posterArtwork(link: String?): String? {
         if (link.isNullOrBlank() || link.length > 8192 || link.any { it.isWhitespace() || it.isISOControl() }) return null
-        if (link.startsWith("content://") || link.startsWith("android.resource://")) return link
+        if (link.startsWith("content://") || link.startsWith("file://") || link.startsWith("android.resource://")) return link
         val uri = runCatching { java.net.URI(link) }.getOrNull() ?: return null
-        return link.takeIf { uri.scheme.equals("https", ignoreCase = true) && !uri.host.isNullOrBlank() && uri.rawUserInfo == null }
+        val scheme = uri.scheme?.lowercase() ?: return null
+        return link.takeIf { (scheme == "https" || scheme == "http") && !uri.host.isNullOrBlank() && uri.rawUserInfo == null }
     }
     /** Extract only data from the documented intent URI envelope; never deserialize an Intent.
      * All extras, components, flags, selectors, and grants are discarded. The row owner remains authority.
