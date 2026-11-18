@@ -345,7 +345,7 @@ fun AuraAmpPage(profileId:String, entry:FocusRequester, playback:AmpPlayback, on
                                 // For now, we just map MediaEntry to AmpTrack so it can be displayed.
                                 // Playback is not yet integrated for these tracks.
                                 val tracks = serverMusic.map { entry ->
-                                    AmpTrack("server|${entry.id}", entry.title, entry.artist ?: "Unknown Artist", (entry.durationMs ?: 0L).toInt() / 1000, entry.imagePath)
+                                    AmpTrack(entry.id, entry.title, entry.artist ?: "Unknown Artist", (entry.durationMs ?: 0L).toInt() / 1000, entry.imagePath)
                                 }
                                 songRows(tracks, playback, playerEntry)
                             }
