@@ -149,7 +149,7 @@ class PlexClient(private val http: MediaHttp, private val identity: ClientIdenti
     suspend fun items(account: ServerAccount, library: MediaLibrary, start: Int = 0, limit: Int = JellyfinEmbyClient.PAGE): MediaResult<MediaPage> {
         val a = address(account) ?: return MediaResult.Failure(MediaError.INSECURE_ADDRESS)
         if (!KEY.matches(library.id)) return MediaResult.Failure(MediaError.NOT_FOUND)
-        val type = when (library.type) { LibraryType.MOVIES -> "&type=1"; LibraryType.SHOWS -> "&type=2"; LibraryType.MUSIC -> "&type=8"; LibraryType.OTHER -> "" }
+        val type = when (library.type) { LibraryType.MOVIES -> "&type=1"; LibraryType.SHOWS -> "&type=2"; LibraryType.MUSIC -> "&type=10"; LibraryType.OTHER -> "" }
         val url = a.url("/library/sections/${library.id}/all?sort=titleSort$type&X-Plex-Container-Start=${start.coerceAtLeast(0)}&X-Plex-Container-Size=${limit.coerceIn(1, JellyfinEmbyClient.PAGE)}")
         return call("GET", url, account.token, account.deviceId).map(::parsePage)
     }
