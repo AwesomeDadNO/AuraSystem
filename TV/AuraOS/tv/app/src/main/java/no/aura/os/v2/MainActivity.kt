@@ -99,7 +99,8 @@ class MainActivity : ComponentActivity() {
             modernPlex = { id, create -> plexKeys.open(id, create)?.let { no.aura.os.v2.mediaserver.PlexDeviceJwtClient(mediaHttp, it) } },
             forgetModernPlex = plexKeys::forget, purgeModernPlex = plexKeys::purgeDeletedProfile,
             mayManage = { id -> profileService.state.activeId == id && gate.isAuthorized() })
-        val catalog = RealCatalogService(tmdbRepo, watch = no.aura.os.v2.integration.MergedWatchProgress(progress, mediaServers, profileService), art = no.aura.os.v2.tmdb.ArtSizes.forDisplayWidth(resources.displayMetrics.widthPixels))
+        val mediaPlayback = no.aura.os.v2.mediaserver.ServerLibraryPlayback(mediaServers, mediaHttp, serverIdentity)
+        val catalog = RealCatalogService(tmdbRepo, watch = no.aura.os.v2.integration.MergedWatchProgress(progress, mediaServers, profileService), mediaServers = mediaServers, mediaPlayback = mediaPlayback, art = no.aura.os.v2.tmdb.ArtSizes.forDisplayWidth(resources.displayMetrics.widthPixels))
         val settingsDeps = SettingsDeps(
             admin = gate, modules = PrefsModulePrefsStore(applicationContext), profiles = profileService,
             connections = DevConnections(YouTubeConfig(BuildConfig.YOUTUBE_API_KEY), youtubeVerifiedAt = { youtubeFeed.lastVerifiedAtMs }, simklConfigured = simklClient.configured, simklVerifiedAt = { simklRuntime.verifiedAt(profileService.state.activeId) }, media = { id -> mediaServers.status(profileService.state.activeId, id) }, tmdbConfigured = tmdbConfig.isConfigured, tmdbVerifiedAt = { tmdbRepo.lastSuccessMs }, ultra = { ultra.get() }), launcher = sources, device = sources,

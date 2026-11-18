@@ -1,8 +1,10 @@
 package no.aura.os.v2.tmdb
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import no.aura.os.v2.brand.BrandLabelSpec
@@ -45,6 +47,8 @@ sealed interface DetailsResult {
  */
 class RealCatalogService(
     private val repo: TmdbRepository, private val watch: WatchProgressSource = NoWatchProgress,
+    private val mediaServers: no.aura.os.v2.mediaserver.MediaServerService? = null,
+    private val mediaPlayback: no.aura.os.v2.mediaserver.ServerLibraryPlayback? = null,
     private val heroCount: Int = HERO_COUNT, private val maxPerShelf: Int = MAX_PER_SHELF, private val art: ArtSizes = ArtSizes.Small,
 ) {
     private class Spec(val id: String, val title: String, val feed: Feed, val poster: Boolean = true)
@@ -99,6 +103,40 @@ class RealCatalogService(
                 ref != null && (repo.details(ref) as? TmdbResult.Ok)?.value?.certification?.let { ChildPolicy.allows(profile, it) } == true
             } else stored
             if (cont.isNotEmpty()) shelves.add(0, Shelf("continue", "Continue Watching", cont, continueStyle = true))
+        }
+
+        if ((page == RealPage.MOVIES || page == RealPage.TV) && mediaServers != null && mediaPlayback != null && !profile.isChild) {
+            val accounts = withContext(Dispatchers.IO) { mediaServers.accounts(profile.id) }
+            for (acc in accounts) {
+                val verifyRes = withContext(Dispatchers.IO) { mediaServers.verifyFresh(profile.id, acc) }
+                val isOnline = verifyRes is no.aura.os.v2.mediaserver.MediaResult.Ok
+                val libsRes = withContext(Dispatchers.IO) { mediaPlayback.libraries(profile.id, acc) }
+                val libs = (libsRes as? no.aura.os.v2.mediaserver.MediaResult.Ok<*>)?.value as? List<*> ?: emptyList<Any?>()
+                val targetType = if (page == RealPage.MOVIES) no.aura.os.v2.mediaserver.LibraryType.MOVIES else no.aura.os.v2.mediaserver.LibraryType.SHOWS
+                val matchingLib = libs.mapNotNull { it as? no.aura.os.v2.mediaserver.MediaLibrary }.firstOrNull { it.type == targetType }
+                if (matchingLib != null) {
+                    val itemsRes = withContext(Dispatchers.IO) { mediaPlayback.items(profile.id, acc, matchingLib, 0, 20) }
+                    val entries = ((itemsRes as? no.aura.os.v2.mediaserver.MediaResult.Ok<*>)?.value as? no.aura.os.v2.mediaserver.MediaPage)?.items.orEmpty()
+                    if (entries.isNotEmpty()) {
+                        val contItems = entries.map { entry ->
+                            ContinueItem(
+                                item = MediaItem(
+                                    id = "server:${acc.serverId}|${entry.id}",
+                                    title = entry.title,
+                                    subtitle = entry.year?.toString() ?: entry.seriesTitle,
+                                    artwork = Artwork(imageUrl = entry.imagePath ?: ""),
+                                    overview = ""
+                                ),
+                                progress = 0f,
+                                remainingLabel = ""
+                            )
+                        }
+                        val statusText = if (isOnline) "🟢 Online" else "🔴 Offline"
+                        val shelfTitle = "Latest on ${acc.kind.title}  $statusText"
+                        shelves.add(0, Shelf("server:${acc.serverId}", shelfTitle, contItems, continueStyle = false, poster = true))
+                    }
+                }
+            }
         }
         if (heroTitles.isEmpty() && shelves.none { !it.continueStyle }) return@coroutineScope CatalogResult.Empty
         val heroSource = heroTitles.ifEmpty { fallbackHero.filter { it.backdropPath != null }.take(heroCount) }
