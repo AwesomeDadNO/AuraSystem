@@ -106,36 +106,49 @@ class RealCatalogService(
         }
 
         if ((page == RealPage.MOVIES || page == RealPage.TV) && mediaServers != null && mediaPlayback != null && !profile.isChild) {
-            val accounts = withContext(Dispatchers.IO) { mediaServers.accounts(profile.id) }
-            for (acc in accounts) {
-                val verifyRes = withContext(Dispatchers.IO) { mediaServers.verifyFresh(profile.id, acc) }
-                val isOnline = verifyRes is no.aura.os.v2.mediaserver.MediaResult.Ok
-                val libsRes = withContext(Dispatchers.IO) { mediaPlayback.libraries(profile.id, acc) }
-                val libs = (libsRes as? no.aura.os.v2.mediaserver.MediaResult.Ok<*>)?.value as? List<*> ?: emptyList<Any?>()
-                val targetType = if (page == RealPage.MOVIES) no.aura.os.v2.mediaserver.LibraryType.MOVIES else no.aura.os.v2.mediaserver.LibraryType.SHOWS
-                val matchingLib = libs.mapNotNull { it as? no.aura.os.v2.mediaserver.MediaLibrary }.firstOrNull { it.type == targetType }
-                if (matchingLib != null) {
-                    val itemsRes = withContext(Dispatchers.IO) { mediaPlayback.items(profile.id, acc, matchingLib, 0, 20) }
-                    val entries = ((itemsRes as? no.aura.os.v2.mediaserver.MediaResult.Ok<*>)?.value as? no.aura.os.v2.mediaserver.MediaPage)?.items.orEmpty()
-                    if (entries.isNotEmpty()) {
-                        val contItems = entries.map { entry ->
-                            ContinueItem(
-                                item = MediaItem(
-                                    id = "server:${acc.serverId}|${entry.id}",
-                                    title = entry.title,
-                                    subtitle = entry.year?.toString() ?: entry.seriesTitle,
-                                    artwork = Artwork(imageUrl = entry.imagePath ?: ""),
-                                    overview = ""
-                                ),
-                                progress = 0f,
-                                remainingLabel = ""
-                            )
+            val serverShelves = coroutineScope {
+                val accounts = withContext(Dispatchers.IO) { mediaServers.accounts(profile.id) }
+                accounts.map { acc ->
+                    async(Dispatchers.IO) {
+                        try {
+                            kotlinx.coroutines.withTimeout(2000L) {
+                                val verifyRes = mediaServers.verifyFresh(profile.id, acc)
+                                val isOnline = verifyRes is no.aura.os.v2.mediaserver.MediaResult.Ok
+                                val libsRes = mediaPlayback.libraries(profile.id, acc)
+                                val libs = (libsRes as? no.aura.os.v2.mediaserver.MediaResult.Ok<*>)?.value as? List<*> ?: emptyList<Any?>()
+                                val targetType = if (page == RealPage.MOVIES) no.aura.os.v2.mediaserver.LibraryType.MOVIES else no.aura.os.v2.mediaserver.LibraryType.SHOWS
+                                val matchingLib = libs.mapNotNull { it as? no.aura.os.v2.mediaserver.MediaLibrary }.firstOrNull { it.type == targetType }
+                                if (matchingLib != null) {
+                                    val itemsRes = mediaPlayback.items(profile.id, acc, matchingLib, 0, 20)
+                                    val entries = ((itemsRes as? no.aura.os.v2.mediaserver.MediaResult.Ok<*>)?.value as? no.aura.os.v2.mediaserver.MediaPage)?.items.orEmpty()
+                                    if (entries.isNotEmpty()) {
+                                        val contItems = entries.map { entry ->
+                                            ContinueItem(
+                                                item = MediaItem(
+                                                    id = "server:${acc.serverId}|${entry.id}",
+                                                    title = entry.title,
+                                                    subtitle = entry.year?.toString() ?: entry.seriesTitle,
+                                                    artwork = Artwork(imageUrl = entry.imagePath ?: ""),
+                                                    overview = ""
+                                                ),
+                                                progress = 0f,
+                                                remainingLabel = ""
+                                            )
+                                        }
+                                        val statusText = if (isOnline) "🟢 Online" else "🔴 Offline"
+                                        val shelfTitle = "Latest on ${acc.kind.title}  $statusText"
+                                        Shelf("server:${acc.serverId}", shelfTitle, contItems, continueStyle = false, poster = true)
+                                    } else null
+                                } else null
+                            }
+                        } catch (_: Exception) {
+                            null
                         }
-                        val statusText = if (isOnline) "🟢 Online" else "🔴 Offline"
-                        val shelfTitle = "Latest on ${acc.kind.title}  $statusText"
-                        shelves.add(0, Shelf("server:${acc.serverId}", shelfTitle, contItems, continueStyle = false, poster = true))
                     }
-                }
+                }.awaitAll().filterNotNull()
+            }
+            if (serverShelves.isNotEmpty()) {
+                shelves.addAll(0, serverShelves)
             }
         }
         if (heroTitles.isEmpty() && shelves.none { !it.continueStyle }) return@coroutineScope CatalogResult.Empty
